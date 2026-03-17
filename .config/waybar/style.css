@@ -1,0 +1,153 @@
+@import "colors.css";
+
+/* ── BASE ───────────────────────────────────────────────────────────────────── */
+* {
+    font-family: "FiraCode Nerd Font", monospace;
+    font-size: 13px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+
+/* ── BAR ────────────────────────────────────────────────────────────────────── */
+window#waybar {
+    background: rgba(10, 10, 18, 0.65);
+    color: #cdd6f4;
+    border-radius: 12px;
+    box-shadow:
+        0 0 18px rgba(203, 166, 247, 0.08),
+        0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* ── MODULES ────────────────────────────────────────────────────────────────── */
+.modules-left,
+.modules-center,
+.modules-right {
+    padding: 2px 6px;
+}
+
+#workspaces,
+#custom-music,
+#custom-btop,
+#custom-notion,
+#temperature,
+#backlight,
+#pulseaudio,
+#network,
+#battery,
+#clock,
+#custom-power {
+    background: rgba(30, 30, 46, 0.75);
+    color: #cdd6f4;
+    padding: 3px 12px;
+    border-radius: 8px;
+    margin: 4px 2px;
+}
+
+#custom-btop:hover,
+#custom-notion:hover,
+#temperature:hover,
+#backlight:hover,
+#pulseaudio:hover,
+#network:hover,
+#battery:hover,
+#clock:hover {
+    background: rgba(49, 50, 68, 0.9);
+    box-shadow: 0 0 10px rgba(203, 166, 247, 0.25);
+    color: #cba6f7;
+}
+
+/* ── WORKSPACES ─────────────────────────────────────────────────────────────── */
+#workspaces { padding: 3px 6px; }
+
+#workspaces button {
+    color: #585b70;
+    padding: 0 6px;
+    border-radius: 6px;
+    background: transparent;
+}
+
+#workspaces button.active {
+    color: #cba6f7;
+    background: rgba(203, 166, 247, 0.15);
+    box-shadow: 0 0 8px rgba(203, 166, 247, 0.25);
+}
+
+#workspaces button.urgent {
+    color: #f38ba8;
+    box-shadow: 0 0 8px rgba(243, 139, 168, 0.4);
+}
+
+#workspaces button:hover {
+    color: #cdd6f4;
+    background: rgba(203, 166, 247, 0.1);
+}
+
+/* ── MUSIC ──────────────────────────────────────────────────────────────────── */
+#custom-music {
+    color: #cba6f7;
+    background: rgba(30, 30, 46, 0.8);
+    padding: 3px 16px;
+    border-radius: 10px;
+    min-width: 280px;
+    border: 1px solid transparent;
+}
+
+#custom-music.playing {
+    box-shadow:
+        0 0 12px rgba(203, 166, 247, 0.25),
+        0 0 32px rgba(203, 166, 247, 0.08);
+    border-color: rgba(203, 166, 247, 0.15);
+}
+
+#custom-music.paused {
+    color: #585b70;
+    box-shadow: none;
+    border-color: transparent;
+}
+
+#custom-music.stopped {
+    color: #45475a;
+    box-shadow: none;
+}
+
+/* ── BTOP ───────────────────────────────────────────────────────────────────── */
+#custom-btop { color: #a6e3a1; font-size: 15px; }
+
+/* ── NOTION ─────────────────────────────────────────────────────────────────── */
+#custom-notion { color: #f5c2e7; }
+
+/* ── TEMPERATURE ────────────────────────────────────────────────────────────── */
+#temperature.critical {
+    color: #f38ba8;
+    box-shadow: 0 0 10px rgba(243, 139, 168, 0.35);
+}
+
+
+/* ── AUDIO ──────────────────────────────────────────────────────────────────── */
+#pulseaudio.muted { color: #45475a; }
+
+/* ── NETWORK ────────────────────────────────────────────────────────────────── */
+#network.disconnected { color: #f38ba8; }
+
+#bluetooth { color: #89b4fa; }
+#bluetooth.connected { color: #89dceb; }
+#bluetooth.disabled { color: #45475a; }
+
+/* ── BATTERY ────────────────────────────────────────────────────────────────── */
+#battery.charging {
+    color: #a6e3a1;
+    box-shadow: 0 0 8px rgba(166, 227, 161, 0.2);
+}
+#battery.warning:not(.charging)  { color: #fab387; }
+#battery.critical:not(.charging) {
+    color: #f38ba8;
+    box-shadow: 0 0 10px rgba(243, 139, 168, 0.35);
+}
+
+/* ── CLOCK ──────────────────────────────────────────────────────────────────── */
+#clock { color: #89dceb; }
+
+/* ── POWER ──────────────────────────────────────────────────────────────────── */
+#custom-power { color: #f38ba8; padding: 3px 10px; }
+#custom-power:hover { box-shadow: 0 0 10px rgba(243, 139, 168, 0.3); }

@@ -1,0 +1,19 @@
+[templates.gtk3]
+input_path = "~/.config/ags/matugen/templates/gtk.css"
+output_path = "~/.config/gtk-3.0/gtk.css"
+
+[templates.gtk4]
+input_path = "~/.config/ags/matugen/templates/gtk.css"
+output_path = "~/.config/gtk-4.0/gtk.css"
+
+[templates.ags]
+input_path = "~/.config/ags/matugen/templates/ags.scss"
+output_path = "~/.config/ags/style/abstracts/_variables.scss"
+
+[templates.hypr]
+input_path = "~/.config/ags/matugen/templates/hyprland_colors.conf"
+output_path = "~/.config/hypr/hyprland_colors.conf"
+
+[templates.hyprlock]
+input_path = "~/.config/ags/matugen/templates/hyprlock_colors.conf"
+output_path = "~/.config/hypr/hyprlock_colors.conf"

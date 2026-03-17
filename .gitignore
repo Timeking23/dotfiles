@@ -1,0 +1,14 @@
+# Secrets
+*.env
+notion.env
+
+# OS junk
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Fish internals (auto-generated)
+.config/fish/fish_variables
+.config/fish/completions/
+.config/fish/conf.d/
