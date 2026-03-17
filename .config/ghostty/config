@@ -38,4 +38,4 @@ custom-shader-animation = true
 gtk-titlebar = false
 window-decoration = false
 
-desktop-notifications = no-clipboard-copy
+desktop-notifications = false
