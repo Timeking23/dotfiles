@@ -48,8 +48,7 @@ install_deps() {
         fish
         starship
 
-        # Status bar & launcher
-        waybar
+        # Launcher
         rofi
 
         # Editors
@@ -135,7 +134,6 @@ link_configs() {
     info "Linking configs..."
     link .config/hypr
     link .config/kitty
-    link .config/waybar
     link .config/rofi
     link .config/fish
     link .config/ghostty
@@ -194,5 +192,4 @@ echo "You may need to:"
 echo "  - Reload Hyprland:  hyprctl reload"
 echo "  - Restart your terminal"
 echo "  - Set fish as default shell:  chsh -s /usr/bin/fish"
-echo "  - Create waybar/notion.env with your API tokens (not tracked for security)"
 echo ""
