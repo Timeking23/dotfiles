@@ -5,8 +5,8 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     vec2 uv = fragCoord / iResolution.xy;
     vec4 base = texture(iChannel0, uv);
 
-    float bloom_radius = 1.5;
-    float bloom_intensity = 0.4;
+    float bloom_radius = 1.0;
+    float bloom_intensity = 0.5;
     int samples = 5;
     vec4 glow = vec4(0.0);
 
