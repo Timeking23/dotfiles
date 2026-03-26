@@ -78,6 +78,14 @@ install_deps() {
         qt5ct
         qt6ct
         python-pillow
+
+        # Fonts
+        ttf-firacode-nerd
+        ttf-material-symbols-variable
+
+        # AGS runtime dependencies
+        dart-sass
+        libgtop
     )
 
     info "Installing official repo packages..."
