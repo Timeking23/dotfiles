@@ -13,37 +13,36 @@ My Hyprland rice on Manjaro Linux (ASUS ROG Zephyrus G14).
 | **WM**           | [Hyprland](https://hyprland.org)           |
 | **Terminal**      | [Ghostty](https://ghostty.org) / [Kitty](https://sw.kovidgoyal.net/kitty/) |
 | **Shell**         | [Fish](https://fishshell.com) + [Starship](https://starship.rs) prompt |
-| **Bar**           | [Waybar](https://github.com/Alexays/Waybar) |
-| **Launcher**      | [Rofi](https://github.com/davatorium/rofi) (adi1090x themes) |
-| **Widgets**       | [AGS](https://github.com/Aylur/ags) (Aylur's GTK Shell) |
-| **Wallpaper**     | [Hyprpaper](https://github.com/hyprwm/hyprpaper) |
-| **Night Light**   | [wlsunset](https://sr.ht/~kennylevinsen/wlsunset/) |
+| **Launcher**      | [Rofi](https://github.com/davatorium/rofi) ([adi1090x](https://github.com/adi1090x/rofi) themes) |
+| **Widgets**       | [AGS](https://github.com/Aylur/ags) (Aylur's GTK Shell) via [matshell](https://github.com/Neurarian/matshell) |
+| **Wallpaper**     | [Hyprpaper](https://github.com/hyprwm/hyprpaper) / [linux-wallpaperengine](https://github.com/Almamu/linux-wallpaperengine) |
 | **Fetch**         | [Fastfetch](https://github.com/fastfetch-cli/fastfetch) (random anime logo on launch) |
 | **File Manager**  | Dolphin |
 | **Browser**       | Brave (Wayland-native) |
-| **Font**          | JetBrains Mono Nerd Font |
 
 ## Features
 
 - **Neon purple/bloom aesthetic** — purple active borders, glow shadows, bloom shader in Ghostty
 - **NVIDIA + Wayland** — env vars pre-configured for RTX 4070 Max-Q on Hyprland
 - **Transparent terminals** — 75% opacity with blur
-- **Waybar** with custom Python scripts for media player, album colors, Notion integration, and VPN status
-- **Rofi** with [adi1090x](https://github.com/adi1090x/rofi) theme collection for launchers and power menus
-- **Fish shell** with a `brave-wayland` launcher function and randomized fastfetch logos on terminal open
-- **Kitty** themed with Birds of Paradise color scheme
+- **AGS widgets** — custom sidebar with calendar, Notion integration, wallpaper picker, media controls
+- **Rofi** with adi1090x theme collection for launchers and power menus
+- **Fish shell** with Starship prompt and randomized fastfetch logos on terminal open
+- **12 Ghostty shaders** — bloom, CRT, matrix rain, vignette, glitch, and more
+- **Night light toggle** — shader-based blue light filter via keybind
 
-## Structure
+## Repo Structure
 
 ```
 dotfiles/
 ├── .config/
-│   ├── hypr/              # Hyprland + Hyprpaper config
-│   ├── ghostty/           # Ghostty terminal (bloom shader, Birds of Paradise)
+│   ├── ags/               # AGS widgets (git submodule: Timeking23/matshell)
+│   ├── hypr/              # Hyprland config, colors, shaders, nightlight toggle
+│   ├── ghostty/           # Ghostty terminal config + 12 shaders
 │   ├── kitty/             # Kitty terminal + themes
-│   ├── waybar/            # Bar config, styles, custom scripts
-│   ├── rofi/              # Launcher + power menu themes
-│   ├── fish/              # Shell config + custom functions
+│   ├── rofi/              # Rofi base config
+│   ├── rofi.ryona/        # Custom Rofi launcher (themes submodule: adi1090x/rofi)
+│   ├── fish/              # Fish shell config + functions
 │   ├── fastfetch/         # System fetch config
 │   ├── btop/              # System monitor config
 │   ├── helix/             # Text editor config
@@ -53,41 +52,91 @@ dotfiles/
 │   ├── swappy/            # Screenshot annotation
 │   ├── flashfocus/        # Window flash on focus
 │   └── starship.toml      # Prompt theme
-├── Documents/wallpaper/   # Wallpapers
-├── Pictures/fastfetch-logos/  # Random logos for fastfetch
-└── install.sh             # Symlink installer
+├── Documents/wallpaper/
+├── Pictures/fastfetch-logos/
+└── install.sh
 ```
 
-## Install
+---
+
+## Installation (Step by Step)
+
+### Prerequisites
+
+- An **Arch-based** distro (Manjaro, Arch, EndeavourOS)
+- `git` installed (`sudo pacman -S git`)
+- A working internet connection
+- `base-devel` installed (`sudo pacman -S --needed base-devel`) — needed for AUR builds
+
+### Step 1: Clone the repo
+
+Clone with `--recursive` so the git submodules (AGS widgets + Rofi themes) are pulled in automatically:
 
 ```bash
-# Clone
-git clone https://github.com/Timeking23/dotfiles.git ~/dotfiles
+git clone --recursive https://github.com/Timeking23/dotfiles.git ~/dotfiles
 cd ~/dotfiles
+```
 
-# Symlink everything to ~/.config
+> If you already cloned without `--recursive`, run:
+> ```bash
+> git submodule update --init --recursive
+> ```
+
+### Step 2: Run the installer
+
+The install script does three things in order:
+1. Installs all required packages (pacman + AUR via yay)
+2. Initializes git submodules
+3. Symlinks all configs to `~/.config/`
+
+```bash
+chmod +x install.sh
 ./install.sh
 ```
 
-The install script backs up any existing configs to `.bak` before symlinking.
+The script will ask for your `sudo` password to install packages.
 
-### Dependencies
+> Any existing configs at the symlink destinations are backed up to `*.bak` — nothing gets deleted.
 
-Install on Manjaro/Arch:
+### Step 3: Post-install setup
+
+After the script finishes:
 
 ```bash
-yay -S hyprland hyprpaper ghostty kitty waybar rofi fish starship fastfetch \
-       btop helix wlsunset swappy flashfocus brightnessctl playerctl \
-       ttf-jetbrains-mono-nerd dolphin polkit-gnome
+# Set fish as your default shell (if it isn't already)
+chsh -s /usr/bin/fish
+
+# Reload Hyprland to pick up the new config
+hyprctl reload
+
+# Restart your terminal
 ```
 
-AGS is managed via Nix (`nix run ~/.config/ags`).
+### Optional flags
 
-### Post-install
+You can run parts of the installer separately:
 
-- Create `~/.config/waybar/notion.env` with your Notion API credentials (not tracked for security)
-- Reload Hyprland: `hyprctl reload`
-- Restart your terminal
+```bash
+# Only install packages (no symlinking)
+./install.sh --deps-only
+
+# Only symlink configs (skip package installation)
+./install.sh --link-only
+```
+
+---
+
+## What Gets Installed
+
+### Official packages (pacman)
+
+`hyprland` `hyprpaper` `xdg-desktop-portal-hyprland` `sway` `kitty` `ghostty` `foot` `fish` `starship` `rofi` `helix` `btop` `fastfetch` `brightnessctl` `playerctl` `jq` `wl-clipboard` `cliphist` `swappy` `grim` `slurp` `pipewire` `wireplumber` `pavucontrol` `network-manager-applet` `polkit-gnome` `dolphin` `qt5ct` `qt6ct` `python-pillow`
+
+### AUR packages (yay)
+
+`brave-bin` `matugen-bin` `flashfocus` `rofi-bluetooth-git` `networkmanager-dmenu-git` `linux-wallpaperengine-git` `aylurs-gtk-shell` `libastal-git` `libastal-io-git` `libastal-4-git` `libastal-apps-git` `libastal-battery-git` `libastal-bluetooth-git` `libastal-cava-git` `libastal-hyprland-git` `libastal-mpris-git` `libastal-network-git` `libastal-notifd-git` `libastal-powerprofiles-git` `libastal-tray-git` `libastal-wireplumber-git`
+
+---
 
 ## Keybindings
 
@@ -106,6 +155,7 @@ AGS is managed via Nix (`nix run ~/.config/ags`).
 | `Super + Arrow keys`         | Move focus          |
 | `Super + LMB drag`           | Move window         |
 | `Super + RMB drag`           | Resize window       |
+| `Super + Shift + N`          | Toggle night light  |
 | `Super + Delete`             | Exit Hyprland       |
 
 ## Hardware

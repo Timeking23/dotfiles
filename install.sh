@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Dotfiles install script
-# Installs dependencies and symlinks configs from this repo
+# Installs dependencies, initializes submodules, and symlinks configs
 # Usage: ./install.sh [--deps-only | --link-only]
 
 set -euo pipefail
@@ -95,12 +95,34 @@ install_deps() {
     fi
 
     AUR_PKGS=(
+        # Browser
         brave-bin
+
+        # Theming
         matugen-bin
+
+        # Utilities
         flashfocus
         rofi-bluetooth-git
         networkmanager-dmenu-git
         linux-wallpaperengine-git
+
+        # AGS (Aylur's GTK Shell) + Astal libraries
+        aylurs-gtk-shell
+        libastal-git
+        libastal-io-git
+        libastal-4-git
+        libastal-apps-git
+        libastal-battery-git
+        libastal-bluetooth-git
+        libastal-cava-git
+        libastal-hyprland-git
+        libastal-mpris-git
+        libastal-network-git
+        libastal-notifd-git
+        libastal-powerprofiles-git
+        libastal-tray-git
+        libastal-wireplumber-git
     )
 
     info "Installing AUR packages..."
@@ -109,6 +131,16 @@ install_deps() {
 
     echo ""
     ok "All dependencies installed!"
+}
+
+# ---------------------------------------------------------------------------
+# Initialize git submodules (AGS + rofi themes)
+# ---------------------------------------------------------------------------
+init_submodules() {
+    info "Initializing git submodules..."
+    cd "$DOTFILES_DIR"
+    git submodule update --init --recursive
+    ok "Submodules initialized."
 }
 
 # ---------------------------------------------------------------------------
@@ -135,6 +167,7 @@ link_configs() {
     link .config/hypr
     link .config/kitty
     link .config/rofi
+    link .config/rofi.ryona
     link .config/fish
     link .config/ghostty
     link .config/fastfetch
@@ -146,6 +179,7 @@ link_configs() {
     link .config/sway
     link .config/flashfocus
     link .config/starship.toml
+    link .config/ags
 
     echo ""
     info "Linking assets..."
@@ -170,10 +204,13 @@ case "${1:-all}" in
         install_deps
         ;;
     --link-only)
+        init_submodules
         link_configs
         ;;
     all|"")
         install_deps
+        echo ""
+        init_submodules
         echo ""
         link_configs
         ;;

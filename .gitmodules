@@ -1,0 +1,6 @@
+[submodule ".config/ags"]
+	path = .config/ags
+	url = https://github.com/Timeking23/matshell.git
+[submodule ".config/rofi.ryona/themes"]
+	path = .config/rofi.ryona/themes
+	url = https://github.com/adi1090x/rofi.git
