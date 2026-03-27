@@ -55,6 +55,7 @@ install_deps() {
         helix
 
         # System tools
+        zenity
         btop
         fastfetch
         imagemagick
