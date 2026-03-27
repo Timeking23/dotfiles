@@ -87,6 +87,9 @@ install_deps() {
         # AGS runtime dependencies
         dart-sass
         libgtop
+
+        # ASUS hardware control
+        asusctl
     )
 
     info "Installing official repo packages..."
