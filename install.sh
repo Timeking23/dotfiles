@@ -57,6 +57,7 @@ install_deps() {
         # System tools
         btop
         fastfetch
+        imagemagick
         brightnessctl
         playerctl
         jq

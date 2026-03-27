@@ -20,7 +20,7 @@ if status is-interactive
     function fastfetch
         set img (ls ~/Pictures/fastfetch-logos/*.{jpg,png} 2>/dev/null | shuf -n1)
         if test -n "$img"
-            command fastfetch --logo "$img"
+            command fastfetch --kitty "$img"
         else
             command fastfetch
         end
