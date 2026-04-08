@@ -1,11 +1,12 @@
 # Ghostty Neon Purple Bloom config
-#theme = Wryan
-theme = Monokai Pro
+#theme = Monokai Pro
+theme = Srcery
 
 font-family = JetBrains Mono Nerd Font
 font-size = 12
 
-background-opacity = 0.75
+background-opacity = 0
+#hypr.conf handles it
 
 # Bloom shader
 custom-shader = shaders/heart.glsl

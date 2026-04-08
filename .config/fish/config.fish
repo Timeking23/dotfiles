@@ -1,3 +1,6 @@
+# Qt6 default
+fish_add_path /usr/lib/qt6/bin
+
 if status is-interactive
     # Initialize Starship prompt
     starship init fish | source
