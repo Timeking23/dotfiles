@@ -1,0 +1,34 @@
+# Line numbers
+set linenumbers
+
+# Smooth scrolling
+set smooth
+
+# Mouse support
+set mouse
+
+# Show cursor position in status bar
+set constantshow
+
+# Softwrap long lines
+set softwrap
+
+# Auto-indent
+set autoindent
+
+# Tab = 2 spaces
+set tabsize 2
+set tabstospaces
+
+# Don't create backup files (no file~)
+set nobackups
+
+# Case-sensitive search by default off (use Alt+C to toggle)
+# set casesensitive
+
+# Syntax highlighting — bundled
+include "/usr/share/nano/*.nanorc"
+include "/usr/share/nano/extra/*.nanorc"
+
+# Syntax highlighting — community (nano-syntax-highlighting)
+include "/usr/share/nano-syntax-highlighting/*.nanorc"

@@ -1,0 +1,14 @@
+[Added Associations]
+application/pdf=libreoffice-3.desktop;libreoffice-2.desktop;libreoffice.desktop;
+text/x-c++src=code.desktop;
+
+[Default Applications]
+application/pdf=libreoffice-3.desktop;
+text/html=brave-browser.desktop
+text/x-c++src=code.desktop;
+x-scheme-handler/about=brave-browser.desktop
+x-scheme-handler/claude-cli=claude-code-url-handler.desktop
+x-scheme-handler/http=brave-browser.desktop
+x-scheme-handler/https=brave-browser.desktop
+x-scheme-handler/unknown=brave-browser.desktop
+x-scheme-handler/readest=readest-handler.desktop

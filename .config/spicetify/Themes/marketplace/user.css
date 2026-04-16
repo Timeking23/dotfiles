@@ -1,0 +1,42 @@
+/* =========================================
+   Bloom effects only — no color overrides
+   ========================================= */
+
+/* Now-playing bar — subtle top glow */
+.Root__now-playing-bar {
+  box-shadow: 0 -4px 24px rgba(79, 195, 247, 0.10);
+}
+
+/* Progress bar glow */
+.progress-bar__fg,
+[data-testid="progress-bar"] .progress-bar__fg {
+  box-shadow: 0 0 6px rgba(79, 195, 247, 0.6) !important;
+}
+
+/* Progress bar thumb */
+.progress-bar__slider,
+[data-testid="progress-bar"] .progress-bar__slider {
+  box-shadow: 0 0 8px rgba(79, 195, 247, 0.8) !important;
+}
+
+/* Play/pause button bloom */
+.main-playButton-PlayButton,
+[data-testid="control-button-playpause"] {
+  filter: drop-shadow(0 0 6px rgba(79, 195, 247, 0.5));
+}
+
+/* Currently playing icon bloom */
+.main-trackList-playingIcon,
+[data-testid="playing-icon"] {
+  filter: drop-shadow(0 0 4px rgba(79, 195, 247, 0.8));
+}
+
+/* Card hover bloom */
+.main-card-card:hover {
+  filter: drop-shadow(0 0 10px rgba(79, 195, 247, 0.15));
+}
+
+/* Volume slider glow */
+.volume-bar__fg {
+  box-shadow: 0 0 6px rgba(79, 195, 247, 0.5) !important;
+}

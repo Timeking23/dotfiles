@@ -5,8 +5,7 @@ theme = Srcery
 font-family = JetBrains Mono Nerd Font
 font-size = 12
 
-background-opacity = 0
-#hypr.conf handles it
+background-opacity = 0.55
 
 # Bloom shader
 custom-shader = shaders/heart.glsl

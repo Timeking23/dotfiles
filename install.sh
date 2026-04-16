@@ -193,11 +193,33 @@ link_configs() {
     link .config/flashfocus
     link .config/starship.toml
     link .config/ags
+    link .config/nvim
+    link .config/gtk-3.0
+    link .config/gtk-4.0
+    link .config/qt5ct
+    link .config/qt6ct
+    link .config/kanshi
+    link .config/fontconfig
+    link .config/Kvantum
+    link .config/spicetify
+    link .config/yay
+    link .config/mimeapps.list
+    link .config/wob.ini
+    link .nanorc
 
     echo ""
     info "Linking assets..."
     link Documents/wallpaper
     link Pictures/fastfetch-logos
+
+    echo ""
+    info "Installing SDDM config (requires sudo)..."
+    sudo mkdir -p /etc/sddm.conf.d
+    sudo cp "$DOTFILES_DIR/sddm/theme.conf" /etc/sddm.conf.d/theme.conf
+    sudo mkdir -p /usr/share/sddm/themes/ryona
+    sudo cp "$DOTFILES_DIR/sddm/themes/ryona/Main.qml" /usr/share/sddm/themes/ryona/Main.qml
+    sudo cp "$DOTFILES_DIR/sddm/themes/ryona/metadata.desktop" /usr/share/sddm/themes/ryona/metadata.desktop
+    ok "SDDM config installed."
 
     echo ""
     ok "All configs linked!"
