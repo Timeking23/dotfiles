@@ -1,0 +1,272 @@
+@use "theme" as *;
+
+// =============================================================================
+//  CALENDAR
+// =============================================================================
+//  The month calendar and its Notion-backed note popover.
+// =============================================================================
+
+// ============================
+// CALENDAR
+// ============================
+// Bar palette rather than the player's: this hangs off the clock, so it should
+// read as part of the same deck. Slightly transparent, since it sits over the
+// desktop rather than over a plate.
+
+.calendar {
+  font-family: $font;
+}
+
+// Absolute path, like every other asset here: the stylesheet is applied via
+// load_from_string and has no base URI to resolve a relative url() against.
+$calendar-bg: url("file:///home/ryona/.config/ags/assets/calendar-bg.jpg");
+
+.calendar calDeck {
+  animation: panelIn 160ms ease-out;
+  padding: 8px;
+  border-radius: 3px;
+  background-image:
+    $grunge,
+    linear-gradient(158deg, rgba($sheen, 0.09) 0%, rgba($sheen, 0) 30%),
+    // A scrim over artwork, not the deck's own surface. Kept deliberately thin
+    // -- every layer above the picture costs definition, and legibility is
+    // bought back with text-shadow on the numerals instead of by hazing the
+    // whole panel.
+    linear-gradient(rgba($metal-400, 0.26), rgba($metal-900, 0.42)),
+    $calendar-bg;
+  // one entry per layer, in the same order; the photo covers, the grunge tiles
+  background-size: auto, auto, auto, cover;
+  background-position: center, center, center, center;
+  @include raised;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.62);
+}
+
+.calendar calHead {
+  padding: 3px 4px 5px 4px;
+}
+
+.calendar calMonth {
+  font-size: 15px;
+  letter-spacing: 2px;
+  color: $text;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+}
+
+.calendar button.calNav {
+  min-width: 18px;
+  padding: 1px 6px;
+  margin: 0 2px;
+  border-radius: 2px;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: $text;
+  background-image: $grunge, linear-gradient($metal-500, $metal-800);
+  @include raised;
+}
+
+.calendar button.calNav:hover {
+  background-image: linear-gradient($metal-300, $metal-700);
+  color: $violet-300;
+  box-shadow: 0 0 8px rgba($violet-300, 0.45);
+  text-shadow: 0 0 6px rgba($violet-300, 0.8);
+}
+
+.calendar calWeekdays {
+  padding: 2px 0 3px 0;
+}
+
+.calendar calWeekday {
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: rgba($text, 0.85);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+}
+
+// The date block is its own plate, cut lower than the deck it sits on: same
+// two off-axis sheens as the chassis, but over a much darker base, so the day
+// keys read as sitting *in* something rather than floating on the deck.
+.calendar calGrid {
+  padding: 4px 3px 5px 3px;
+  margin: 0 1px 4px 1px;
+  border-radius: 2px;
+  background-image:
+    $grunge,
+    linear-gradient(158deg, rgba($sheen, 0.12) 0%, rgba($sheen, 0) 32%),
+    linear-gradient(22deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0) 50%),
+    // translucent, so the artwork carries on through the date block instead of
+    // stopping at its edge
+    linear-gradient(rgba($grid-plate, 0.30), rgba($ink-200, 0.44));
+  @include sunken;
+  box-shadow: inset 0 2px 7px rgba(0, 0, 0, 0.6);
+}
+
+.calendar button.day {
+  // the one place transitions are wanted: a glow that snaps on reads as a
+  // rendering glitch, where the deck's mechanical keys should not animate
+  transition: box-shadow 140ms ease-out, text-shadow 140ms ease-out;
+  min-height: 20px;
+  margin: 1px;
+  border-radius: 2px;
+  font-size: 14px;
+  color: $text;
+  background-image: linear-gradient(rgba($ink-200, 0.22), rgba($ink-500, 0.32));
+  // the picture is doing the work now, so the numeral carries its own contrast
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+  // on the darker grid plate a flat black border vanishes; a one-sided
+  // highlight is enough to keep 42 separate keys legible as separate keys
+  border: 1px solid rgba(0, 0, 0, 0.42);
+  border-top-color: rgba($edge, 0.1);
+  border-left-color: rgba($edge, 0.06);
+}
+
+.calendar button.day:hover {
+  color: $violet-100;
+  background-image: linear-gradient(rgba($metal-300, 0.6), rgba($metal-700, 0.6));
+  // lit from inside the key: an outer halo would be overpainted by the
+  // neighbouring day, so the bloom goes inward and the border carries the edge
+  box-shadow: inset 0 0 10px rgba($violet-300, 0.55);
+  border-color: rgba($violet-300, 0.55);
+  text-shadow: 0 0 7px rgba($violet-300, 0.9);
+}
+
+// a day carrying notes gets a rule under it -- the dot most calendars use is a
+// pixel wide at this size and reads as dirt on the screen
+.calendar button.day.marked {
+  border-bottom: 1px solid $violet-300;
+  box-shadow: inset 0 -6px 7px -4px rgba($violet-300, 0.8);
+}
+
+.calendar button.day.today {
+  color: $violet-300;
+  font-weight: bold;
+  border-color: rgba($violet-300, 0.5);
+  text-shadow: 0 0 8px rgba($violet-300, 0.95);
+  animation: dayPulse 2.6s ease-in-out infinite;
+}
+
+.calendar button.day.selected {
+  color: $violet-100;
+  background-image: linear-gradient($violet-990, $violet-800);
+  @include sunken;
+  box-shadow: inset 0 0 13px rgba($violet-300, 0.75);
+  border-color: rgba($violet-300, 0.7);
+  text-shadow: 0 0 8px rgba($violet-100, 0.95);
+}
+
+.calendar button.day.blank {
+  background-image: none;
+  border-color: transparent;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+.calendar calNoteHead {
+  padding: 4px 2px 2px 2px;
+  border-top: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+.calendar calNoteDate {
+  font-size: 16px;
+  letter-spacing: 1.5px;
+  padding-bottom: 2px;
+  color: rgba($violet-300, 0.9);
+}
+
+.calendar calNotes {
+  padding: 2px 0;
+}
+
+.calendar calNoteText {
+  font-size: 17px;
+  color: $text;
+}
+
+.calendar calNoteTextDone {
+  font-size: 17px;
+  color: rgba($text, 0.4);
+}
+
+.calendar button.noteBox {
+  min-width: 17px;
+  min-height: 17px;
+  padding: 0;
+  border-radius: 2px;
+  font-size: 16px;
+  color: $violet-300;
+  background-image: linear-gradient($ink-200, $ink-500);
+  @include sunken;
+}
+
+.calendar button.noteBox.done {
+  background-image: linear-gradient($violet-700, $violet-990);
+}
+
+.calendar button.noteDrop {
+  min-width: 17px;
+  padding: 0 4px;
+  font-size: 18px;
+  color: rgba($text, 0.35);
+  background-image: none;
+  border: none;
+}
+
+.calendar button.noteDrop:hover {
+  color: $danger;
+}
+
+.calendar calEntry {
+  font-size: 17px;
+  padding: 6px 8px;
+  margin-top: 4px;
+  border-radius: 2px;
+  color: $text;
+  background-image: $grain, linear-gradient($ink-200, $ink-500);
+  @include sunken;
+}
+
+.calendar calEntry:focus {
+  border-bottom: 1px solid rgba($violet-300, 0.7);
+}
+
+.calendar calFooter {
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding-top: 4px;
+  color: rgba($text, 0.45);
+}
+
+// ---- day popover ----
+// GTK4 popovers paint through a `contents` node, so the deck styling has to
+// land there rather than on the popover itself.
+
+// The note popover is set_parent()'d to the day button that opened it, so it is
+// a DESCENDANT of `button.day.selected` in the widget tree. text-shadow and
+// color both inherit, which means the key's glow leaked into the note text.
+// Reset them at the popover boundary -- the popover is its own surface and
+// should not wear the state of the key it happens to hang off.
+.calendar popover.calPop,
+.calendar popover.calPop label,
+.calendar popover.calPop entry,
+.calendar popover.calPop entry text {
+  text-shadow: none;
+}
+
+.calendar popover.calPop > contents {
+  animation: popIn 120ms ease-out;
+  padding: 11px;
+  border-radius: 3px;
+  background-image:
+    $grunge,
+    linear-gradient(rgba($metal-400, 0.9), rgba($metal-900, 0.94));
+  @include raised;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.6);
+}
+
+.calendar popover.calPop > arrow {
+  background-image: linear-gradient(rgba($metal-400, 0.9), rgba($metal-900, 0.94));
+  border: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.calendar calPopBody {
+  min-width: 268px;
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    // AGS compiles JSX with its own runtime rather than React's. These two
+    // lines are what make <box>, <label>, <window> resolve to GTK widgets.
+    "jsx": "react-jsx",
+    "jsxImportSource": "ags/gtk4",
+
+    "lib": ["ES2023"],
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "target": "ES2020",
+
+    "strict": true,
+    "noUncheckedIndexedAccess": false,
+
+    // @girs/ is 48MB of machine-generated GObject typings. Checking it tells us
+    // nothing about this config and makes a full typecheck unusably noisy.
+    "skipLibCheck": true
+  },
+  // Only our own source. Without this, TS also walks @girs/ as input files and
+  // reports thousands of errors from generated code we do not maintain.
+  // @girs/index.d.ts pulls in the ambient GJS globals (console, TextDecoder)
+  // and the `gi://` module declarations, so it has to be an input -- but with
+  // skipLibCheck on, TS trusts it instead of checking 1.1M generated lines.
+  "include": ["app.ts", "env.d.ts", "@girs/index.d.ts", "widget/**/*", "state/**/*"],
+  "exclude": ["node_modules"]
+}

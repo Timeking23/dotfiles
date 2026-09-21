@@ -1,0 +1,311 @@
+@use "theme" as *;
+
+// =============================================================================
+//  PLAYER
+// =============================================================================
+//  The music player window and the system monitor, which share one
+//  chassis / headerPlate / meterPlate vocabulary.
+// =============================================================================
+
+// ============================
+// PLAYER WINDOW -- CASING
+// ============================
+// Oxidised metal chassis with bolted-on plates. The whole look rests on
+// bevels: a plate is "raised" when its top/left edges catch light and its
+// bottom/right fall into shadow, and "sunken" when that's inverted. The
+// corrosion on top is a real tiled texture (see $grunge below), not gradients.
+
+.player {
+  font-family: $font;
+}
+
+.player chassis,
+.sysmon chassis,
+.fsgraph chassis {
+  animation: panelIn 170ms ease-out;
+  padding: 8px;
+  border-radius: 3px;
+  // two off-axis sheens over a vertical base = mottled, unevenly-lit metal
+  background-image:
+    $grunge,
+    linear-gradient(158deg, rgba($sheen, 0.24) 0%, rgba($sheen, 0) 34%),
+    linear-gradient(22deg, rgba(0, 0, 0, 0.32) 0%, rgba(0, 0, 0, 0) 46%),
+    linear-gradient($metal-400, $metal-900);
+  @include raised;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.72);
+}
+
+// ---- header plate ----
+
+.player headerPlate,
+.sysmon headerPlate,
+.fsgraph headerPlate {
+  padding: 5px 8px;
+  margin-bottom: 7px;
+  background-image: $grain, linear-gradient($ink-100, $ink-300);
+  @include sunken;
+}
+
+.player headerTitle,
+.sysmon headerTitle,
+.fsgraph headerTitle {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: $text;
+}
+
+.player headerStatus,
+.sysmon headerStatus,
+.fsgraph headerStatus {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  color: rgba($violet-300, 0.9);
+}
+
+// ---- screen ----
+
+.player screenHousing {
+  padding: 5px;
+  background-image: $grunge, linear-gradient($metal-600, $metal-900);
+  @include sunken;
+}
+
+.player screen {
+  padding: 4px;
+  background-color: $ink-400;
+  border-top: 1px solid rgba(0, 0, 0, 0.85);
+  border-left: 1px solid rgba(0, 0, 0, 0.75);
+  border-right: 1px solid rgba($edge, 0.14);
+  border-bottom: 1px solid rgba($edge, 0.18);
+}
+
+.player coverArt {
+  border-radius: 0;
+}
+
+.player screenCaption {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: rgba($edge-dim, 0.5);
+  margin-top: 5px;
+}
+
+// ---- side rails ----
+
+.player railFill {
+  min-width: 28px;
+}
+
+.player button.tile,
+.player button.toggle {
+  min-width: 28px;
+  min-height: 28px;
+  padding: 4px;
+  border-radius: 2px;
+  color: $text;
+  background-image: $grunge, linear-gradient($metal-500, $metal-800);
+  @include raised;
+  transition: none;
+}
+
+.player button.tile:hover,
+.player button.toggle:hover {
+  background-image: linear-gradient($metal-300, $metal-700);
+}
+
+// pressed and "mode engaged" read the same: the plate is pushed into the case
+.player button.tile:active,
+.player button.toggle.active {
+  color: $violet-300;
+  background-image: linear-gradient($violet-990, $violet-800);
+  @include sunken;
+}
+
+.player button:disabled {
+  opacity: 0.3;
+}
+
+// ---- bottom deck ----
+
+.player bottomRow {
+  margin-top: 7px;
+}
+
+.player meterPlate,
+.sysmon meterPlate {
+  padding: 7px 9px;
+  background-image: $grain, linear-gradient($ink-100, $ink-300);
+  @include sunken;
+}
+
+.player progressBar {
+  min-height: 14px;
+  padding: 0;
+
+  trough {
+    min-height: 7px;
+    border-radius: 0;
+    background-color: $ink-600;
+    border-top: 1px solid rgba(0, 0, 0, 0.9);
+    border-bottom: 1px solid rgba($edge, 0.1);
+  }
+
+  highlight {
+    min-height: 7px;
+    border-radius: 0;
+    background-image: linear-gradient($violet-250, $violet-650);
+  }
+
+  slider {
+    min-width: 3px;
+    min-height: 13px;
+    margin: -3px 0;
+    border-radius: 0;
+    background-color: $violet-200;
+  }
+}
+
+.player progressBar:disabled highlight {
+  background-image: linear-gradient($metal-750, $metal-960);
+}
+
+.player counterRow {
+  margin-top: 5px;
+}
+
+.player counter {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: rgba($edge-dim, 0.8);
+}
+
+.player counterDim {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: rgba($violet-300, 0.6);
+}
+
+.player button.playPlate {
+  min-width: 54px;
+  padding: 8px 14px;
+  border-radius: 2px;
+  color: $violet-100;
+  background-image: $grunge, linear-gradient($violet-600, $violet-950);
+  @include raised;
+}
+
+.player button.playPlate:hover {
+  background-image: linear-gradient($violet-400, $violet-900);
+}
+
+.player button.playPlate:active {
+  background-image: linear-gradient($violet-990, $violet-800);
+  @include sunken;
+}
+
+// ============================
+// SYSTEM MONITOR
+// ============================
+// Reuses the player's chassis/headerPlate/meterPlate rules by sharing the
+// same cssName elements; only what is unique to this window lives here.
+
+.sysmon {
+  font-family: $font;
+}
+
+.sysmon graphPlate,
+.fsgraph graphPlate {
+  padding: 7px 8px;
+  background-image: $grain, linear-gradient($ink-200, $ink-500);
+  @include sunken;
+}
+
+.sysmon screenHousing {
+  padding: 5px;
+  background-image: $grunge, linear-gradient($metal-600, $metal-900);
+  @include sunken;
+  margin-bottom: 7px;
+}
+
+.sysmon sectionLabel {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba($text, 0.7);
+}
+
+.sysmon sectionValue {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: $violet-300;
+}
+
+.sysmon sectionCaption {
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: rgba($stamp, 0.8);
+  text-shadow: 0 1px 0 rgba($edge, 0.25);
+  padding: 5px 2px 3px 2px;
+}
+
+.sysmon meterLabel {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba($text, 0.72);
+}
+
+.sysmon meterValue {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: $violet-300;
+}
+
+// the resource glyph, sitting a shade dimmer than its label so the row reads
+// name-first and the icon is only there to be found by shape
+.sysmon meterIcon {
+  font-size: 10px;
+  color: rgba($violet-300, 0.72);
+  padding-right: 6px;
+}
+
+// ---- artwork ----------------------------------------------------------------
+//  Same treatment as the calendar: the photo is the bottom background layer and
+//  every plate above it is thinned until it reads through.
+//
+//  These override the shared chassis/headerPlate/meterPlate rules above at equal
+//  specificity, so ORDER MATTERS -- they only win because they come after. They
+//  are scoped to .player alone: the sysmon and fsgraph windows share those rules
+//  and must keep their plain metal.
+
+$player-bg: url("file:///home/ryona/.config/ags/assets/player-bg.jpg");
+
+.player chassis {
+  background-image:
+    $grunge,
+    linear-gradient(158deg, rgba($sheen, 0.09) 0%, rgba($sheen, 0) 30%),
+    linear-gradient(22deg, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0) 46%),
+    linear-gradient(rgba($metal-400, 0.26), rgba($metal-900, 0.42)),
+    $player-bg;
+  background-size: auto, auto, auto, auto, cover;
+  background-position: center, center, center, center, center;
+}
+
+//  The plates are what actually hide a picture -- the chassis is mostly covered
+//  by them. Thinned here, and the type below carries its own contrast instead.
+.player headerPlate {
+  background-image: $grain, linear-gradient(rgba($ink-100, 0.42), rgba($ink-300, 0.55));
+}
+
+.player meterPlate {
+  background-image: $grain, linear-gradient(rgba($ink-100, 0.42), rgba($ink-300, 0.55));
+}
+
+.player screenHousing {
+  background-image: $grunge, linear-gradient(rgba($metal-600, 0.5), rgba($metal-900, 0.62));
+}
+
+//  Type sits on artwork now, so it stops relying on a flat plate behind it.
+.player headerTitle,
+.player headerStatus,
+.player screenCaption {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+}

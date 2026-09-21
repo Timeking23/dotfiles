@@ -1,0 +1,22 @@
+// =============================================================================
+//  ALTERNATE PALETTE ENTRY  --  oxide
+// =============================================================================
+//  Same stylesheet as style.scss, compiled against a different palette.
+//  Configuring the theme module MUST come before anything else loads it, which
+//  is why this @use sits first: the widget partials each do `@use "theme"`,
+//  and Sass only allows a module to be configured once, by the first loader.
+//
+//  Imported as a string by widget/Palette.tsx and pushed into a CSS provider at
+//  USER priority to re-skin the running shell without a reload.
+// =============================================================================
+
+@use "style/theme" with ($palette-name: oxide);
+
+@use "style/animations";
+@use "style/bar";
+@use "style/player";
+@use "style/sidebar";
+@use "style/floating";
+@use "style/fsgraph";
+@use "style/calendar";
+@use "style/osd";

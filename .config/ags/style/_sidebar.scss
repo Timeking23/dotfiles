@@ -1,0 +1,812 @@
+@use "theme" as *;
+
+// =============================================================================
+//  SIDEBAR
+// =============================================================================
+//  The left dossier drawer and the wallpaper browser that lives inside
+//  one of its panels.
+// =============================================================================
+
+// ============================
+// SIDEBAR -- DOSSIER
+// ============================
+// Same casing language as the player and bar: textured metal deck, sunken
+// plates, violet only where something is engaged.
+//
+// Artwork background. The scrim is graded rather than flat: heaviest at the
+// top where the readout panels sit, lightest at the bottom so the angel shows
+// through the spacer instead of being muddied out. background-size pairs with
+// the layer list -- `auto` for the scrim gradient, `cover` for the photo.
+
+//  The artwork is three stacked layers rather than one pre-appended collage,
+//  because the divider needs an alpha channel and JPEG has none. Baking the
+//  stack into a PNG instead would mean storing two photographs losslessly for
+//  the sake of one 675x380 strip.
+//
+//  The divider OVERLAPS the page below it. Only its lace band is given room
+//  in the stack; the bow's tails hang past that and land on top of page 2,
+//  which is why the numbers below do not simply add up:
+//
+//    sidebar-1.jpeg   1200px   46.985%   y 0
+//    linebreak.png     298px   11.668%   y 1170   (30px halo room, 154px of
+//                                                  gap, then 84px of tail
+//                                                  over page 2, then 30 more)
+//    sidebar-2.jpeg   1200px   46.985%   y 1354
+//                    -------
+//                     2554px   stack height
+//
+//  Stacking is layer order, not a z-index: earlier layers paint on top, so
+//  listing the divider before both pages is what puts the tails over page 2.
+//
+//  background-position percentages are CSS-standard -- they place a layer at
+//  offset/(container - layer), NOT at a raw y offset. Page 2 stays at 100%
+//  whatever the gap is, because both pages are the same height; the strip's
+//  (1200-30)/(2554-298) has to be recomputed if any height changes --
+//  assets/gen-glow.py prints both numbers when it rebuilds the strip.
+$page-1:    url("file:///home/ryona/.config/ags/assets/sidebar-1.jpeg");
+$page-2:    url("file:///home/ryona/.config/ags/assets/sidebar-2.jpeg");
+$linebreak: url("file:///home/ryona/.config/ags/assets/linebreak.png");
+
+//  Transparent, deliberately. The window is mapped at its full 312px the
+//  instant it opens; only its CONTENTS slide (GtkRevealer, see Sidebar.tsx).
+//  Painting the window itself meant a solid slab appeared at full width first
+//  and the drawer then slid about inside it, which reads as a glitch rather
+//  than as an opening. The artwork on `dossier` is the drawer's own surface.
+//  (It was also set twice, identically.)
+.Sidebar {
+  background-color: transparent;
+}
+
+//  The drawer's frame, in the deck's violet -- a box in a box so the mount
+//  reads as a mount. This is the OUTER one; dossierScroll just inside it is the
+//  inner line. The slide lives here too, so the frame travels with the artwork
+//  rather than sitting still while the pictures move inside it.
+.Sidebar sidebarFrame {
+  margin: 8px;
+  border-radius: 12px;
+
+  //  The OUTER edge is the bar's, verbatim: same grunge over the same darkening
+  //  pass over the same metal ramp, closed with the same hard black hairline
+  //  that .Bar uses where the deck stops. The drawer and the bar are one piece
+  //  of casing, so the drawer's outermost edge should be made of the same thing
+  //  -- a border the bar does not have anywhere in its vocabulary read as a
+  //  separate widget that happened to be parked next to it.
+  //
+  //  A full border rather than .Bar's border-bottom: the bar only ever shows
+  //  one edge, and this floats.
+  border: 1px solid rgba(0, 0, 0, 0.65);
+  background-image:
+    $grunge,
+    linear-gradient(rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.35)),
+    linear-gradient($metal-400, $metal-900);
+
+  //  Padding, not just margin, so the deck shows as a visible mount between the
+  //  black outer edge and the violet inner line.
+  padding: 4px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.6);
+  animation: drawerIn 260ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+//  The violet has moved in here, so the order from outside reads:
+//  black hairline -> metal deck -> violet line -> artwork.
+.Sidebar dossierScroll {
+  border: 1px solid rgba($violet-200, 0.5);
+  border-radius: 8px;
+}
+
+.Sidebar dossier {
+  padding: 14px;
+  // The bar's edge, not the raised bevel: .Bar closes itself with a single
+  // hard black hairline where the deck stops. The drawer is anchored
+  // LEFT|TOP|BOTTOM, so its left edge is off-screen and its right edge is the
+  // one that plays the same role the bar's bottom does.
+  //
+  // The hairline alone disappears against a dark wallpaper, so the inset
+  // highlight puts the lit inner lip back -- that pair, dark line outside and
+  // light lip inside, is what reads as bar rather than as a plain outline.
+  border-right: 1px solid rgba(0, 0, 0, 0.65);
+  border-top: 1px solid rgba(0, 0, 0, 0.65);
+  box-shadow: inset -1px 0 0 rgba($edge, 0.18);
+  font-family: $font;
+  color: $text;
+  // The artwork covers the WHOLE canvas, which layout() sizes to PAGES
+  // drawer-heights. Each photo gets one drawer-height and so keeps its
+  // original proportions; the column scrolls to reach the next.
+  //
+  // The divider's white field is transparent, so what shows through it is the
+  // window's own $ink-700 -- meaning the break re-skins with the palette
+  // instead of sitting there as a baked-in slab of one theme's grey.
+  background-image:
+    linear-gradient(rgba($ink-700, 0.34) 0%, rgba($ink-700, 0.34) 100%),
+    $linebreak,
+    $page-1,
+    $page-2;
+  background-size:
+    auto,
+    100% 11.668%,
+    100% 46.985%,
+    100% 46.985%;
+  background-position:
+    0 0,
+    0 51.862%,
+    0 0,
+    0 100%;
+  // MUST be set: layers no longer cover the box, and the CSS default is
+  // `repeat` -- without this the divider tiles down the whole drawer.
+  background-repeat: no-repeat;
+}
+
+// ---- panels ----
+
+// ---- rows ----
+
+.Sidebar row {
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.28);
+}
+
+.Sidebar rowLabel {
+  font-size: 10px;
+  letter-spacing: 1px;
+  // dark with a light edge below = stamped into the plate. Light grey on light
+  // metal had almost no contrast once the panels stopped being near-black.
+  color: rgba($stamp, 0.82);
+  text-shadow: 0 1px 0 rgba($edge, 0.25);
+}
+
+.Sidebar rowValue {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: $violet-300;
+}
+
+// ---- clock ----
+
+// ---- actions ----
+
+// Bolted-on metal, same as the player rails. These sit over artwork, so they
+// are pitched a stop darker than the player's plates -- bright metal here reads
+// as a hole punched in the panel.
+
+// ============================
+// WALLPAPER BROWSER
+// ============================
+// Lives inside a sidebar Panel, so it inherits the dossier's frame and only
+// needs its own controls.
+
+.SidePanel wallPosition {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: rgba($text, 0.55);
+}
+
+.SidePanel button.wallKey {
+  min-width: 26px;
+  padding: 1px 7px;
+  border-radius: 2px;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: $text;
+  background-image: $grunge, linear-gradient($metal-500, $metal-800);
+  @include raised;
+}
+
+.SidePanel button.wallKey:hover {
+  background-image: linear-gradient($metal-300, $metal-700);
+  color: $violet-300;
+}
+
+.SidePanel button.wallKey:disabled {
+  background-image: linear-gradient($metal-800, $metal-970);
+  color: rgba($text, 0.35);
+}
+
+.SidePanel wallStatus {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: rgba($violet-300, 0.75);
+}
+
+.SidePanel wallTitle {
+  font-size: 9px;
+  color: $text;
+}
+
+// ---- scroll -----------------------------------------------------------------
+//  The column scrolls instead of compressing, so a new panel makes it longer
+//  rather than squeezing the ones above it.
+
+.Sidebar dossierScroll {
+  background-color: transparent;
+}
+
+.Sidebar scrollbar {
+  background-color: transparent;
+  border: none;
+}
+
+.Sidebar scrollbar slider {
+  min-width: 4px;
+  border-radius: 2px;
+  background-color: rgba($edge, 0.22);
+}
+
+.Sidebar scrollbar slider:hover {
+  background-color: rgba($violet-300, 0.55);
+}
+
+// ---- weather ----------------------------------------------------------------
+
+.Sidebar wxHead {
+  padding-bottom: 5px;
+}
+
+.Sidebar wxTemp {
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: $text;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+}
+
+// ---- frame keys -------------------------------------------------------------
+//  One key hung in each painted frame. It carries a glyph, its name and a live
+//  readout; the panel itself opens on a popover, because a frame is ~30% of the
+//  artwork width and a 312px drawer leaves about 90px inside one.
+//
+//  The face is a BAR PLATE, deliberately: same grunge, same metal ramp, same
+//  raised bevel as `.Bar button`. The deck has one casing language and the keys
+//  had drifted out of it -- they used to be full-bleed photographs with a scrim
+//  over them, which read as five different materials hung in a row.
+//
+//  (assets/keys/*.png are consequently no longer referenced. They are still on
+//  disk; putting them back means adding a dim layer under the gradient here.)
+
+//  Flat, not moulded. The grunge texture, the metal ramp and the raised bevel
+//  were three separate ways of saying "this is a physical button", stacked; at
+//  the size these keys actually render, all three read as noise over the
+//  artwork rather than as material. One translucent surface and one hairline
+//  does the same job and lets the painting behind it stay legible.
+//
+//  The idle `keyBreathe` pulse is gone too: a control that moves while nothing
+//  is happening competes with the readout on it, which moves only when the
+//  thing it reports changes.
+//  Shutting. The class is set by toggleSidebar() and the window is not hidden
+//  until the keyframe has run -- see widget/Sidebar.tsx.
+.Sidebar.closing sidebarFrame {
+  animation: drawerOut 260ms cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
+}
+
+.Sidebar button.frameKey {
+  // no fixed width or side margin: layout() in Sidebar.tsx sets both from the
+  // measured mat, and a margin here would be added on top of that
+  padding: 9px 7px;
+  border-radius: 8px;
+  color: $text;
+
+  //  Barely-there edge, NOT a frame. The framing is the drawer's job -- see
+  //  `sidebarFrame`. A key needs just enough of a line to separate its own
+  //  picture from the painted artwork behind it; a second violet frame per key
+  //  competed with the real one and made the drawer read as six nested boxes.
+  border: 1px solid rgba($violet-200, 0.22);
+
+  //  Base colour shows only until the artwork paints; each `kind` below
+  //  supplies its own image plus the scrim that keeps the labels readable.
+  //  Sizing lives here so a key only has to name its picture.
+  background-color: rgba($ink-050, 0.55);
+  background-size: auto, cover;
+  background-position: center, center;
+  background-repeat: repeat, no-repeat;
+
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+  transition:
+    border-color 160ms ease-out,
+    box-shadow 160ms ease-out;
+}
+
+// ---- key artwork ------------------------------------------------------------
+//  One picture per key, behind a scrim.
+//
+//  Layer order is paint order in GTK, EARLIEST ON TOP -- the same rule the
+//  artwork stack at the top of this file depends on. So the gradient is listed
+//  first and lands over the photograph; listing it second puts the photo on top
+//  of the scrim and the labels become unreadable against it.
+//
+//  The scrim is graded, not flat, and light at the top: the picture is the
+//  point, so it only darkens where it has to. The glyph at the top sits on its
+//  own drop shadow and needs almost nothing; the title and the readout at the
+//  bottom are small and need the cover, so that end is heavier.
+//
+//  First attempt ran 0.78 -> 0.90 and hid the artwork almost completely, which
+//  defeats the object.
+@mixin key-art($file) {
+  background-image:
+    linear-gradient(rgba($ink-050, 0.22), rgba($ink-050, 0.66)),
+    url("file:///home/ryona/.config/ags/assets/keys/#{$file}");
+}
+
+.Sidebar button.frameKey.keyWeather   { @include key-art("weather.png"); }
+.Sidebar button.frameKey.keyWallpaper { @include key-art("wallpaper.png"); }
+
+//  Hover lifts the surface and the border; it no longer has to out-shout an
+//  idle pulse, so a small change is enough to read.
+//  Hover and engaged tint with an INSET glow rather than a background-colour.
+//  The colour would sit under the artwork and never be seen; an inset shadow
+//  paints over it.
+.Sidebar button.frameKey:hover {
+  border-color: rgba($violet-200, 0.95);
+  box-shadow:
+    inset 0 0 18px rgba($violet-300, 0.5),
+    0 3px 14px rgba(0, 0, 0, 0.5);
+}
+
+//  the key whose panel is open reads as held down -- the deck's existing rule,
+//  identical to the focused workspace button on the bar
+//  The key whose panel is open. Violet still means engaged -- it is just a flat
+//  fill and a solid border now instead of a gradient pressed into a bevel.
+.Sidebar button.frameKey.engaged {
+  color: $violet-200;
+  border-color: $violet-200;
+  box-shadow:
+    inset 0 0 26px rgba($violet-300, 0.75),
+    0 2px 10px rgba(0, 0, 0, 0.45);
+}
+
+//  The inner frame. Inset from the button's own violet edge so the two read as
+//  a mount inside a frame rather than as one thick doubled border -- which is
+//  the whole reason there are two boxes here and not one.
+//
+//  It only shows because the box it is on expands to fill the button; a box
+//  sized to its children would draw this border around the labels alone.
+//  No border here on purpose -- the framing belongs to the drawer as a whole,
+//  not to each icon button. The box stays because it is what makes the key face
+//  fill its painted mat.
+.Sidebar frameKeyFrame {
+  margin: 4px;
+}
+
+.Sidebar frameKeyFace {
+  margin: 1px 0;
+}
+
+//  The glyph carries the key. It is a Nerd Font character, not an icon-theme
+//  image -- see the note in state/status.ts. Lit violet because it is the one
+//  part of the plate that is allowed to look energised at rest.
+.Sidebar frameKeyGlyph {
+  font-size: 24px;
+  color: $violet-200;
+  //  One shadow for legibility against the artwork, not two for glow. The
+  //  11px violet halo was doing the same job the removed inner glow was.
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.Sidebar frameKeyText {
+  //  8px was below the point where letter-spacing helps rather than hurts.
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: rgba($text, 0.82);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+}
+
+//  The live value, on its own sunken LCD chip -- the same readout treatment the
+//  player and the system monitor use. This is what lets a key report its state
+//  with the drawer shut instead of only naming what it opens.
+//  Still the one lit element on the key -- it is the only part that carries a
+//  live value -- but a flat pill rather than a chip sunk into a bevel.
+.Sidebar frameKeyRead {
+  margin-top: 3px;
+  padding: 1px 7px;
+  border-radius: 6px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: $lcd-on;
+  background-color: rgba($lcd-bg, 0.85);
+  border: 1px solid rgba($lcd-on, 0.22);
+  text-shadow: 0 0 6px rgba($lcd-on, 0.5);
+}
+
+// ---- glyph accents ----------------------------------------------------------
+//  Nerd Font glyphs used as row bullets and headline icons. Sized against the
+//  text they sit beside rather than given a fixed box, so they stay aligned if
+//  the panel font size ever moves.
+
+.Sidebar rowGlyph {
+  font-size: 11px;
+  color: rgba($violet-300, 0.72);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+}
+
+.Sidebar wxGlyph {
+  font-size: 27px;
+  color: $violet-200;
+  text-shadow:
+    0 0 13px rgba($violet-400, 0.45),
+    0 1px 3px rgba(0, 0, 0, 0.85);
+}
+
+// ============================
+// WALLPAPER CAROUSEL
+// ============================
+//  AdwCarousel pages. The stage is a sunken well cut into the panel so the
+//  cards read as sitting *inside* the drawer rather than floating on it, which
+//  is the same trick the LCD readouts use.
+//
+//  Depth is opacity, applied per page from Wallpaper.tsx as the carousel is
+//  dragged -- GTK4 will not scale a widget without a custom snapshot, and a
+//  dimmed neighbour reads as "behind" perfectly well.
+
+//  SET is the only control here that changes anything on screen -- the arrows
+//  and the carousel only browse -- so it is the only one wearing violet.
+.SidePanel button.wallKey.primary {
+  color: $violet-100;
+  background-image: $grunge, linear-gradient($violet-600, $violet-950);
+}
+
+.SidePanel button.wallKey.primary:hover {
+  background-image: linear-gradient($violet-400, $violet-900);
+}
+
+// =============================================================================
+//  CENTRE PANEL
+// =============================================================================
+//  The one window every drawer panel opens into. The panels were popovers
+//  before and were never visible -- a popover on a layer-shell surface is
+//  clipped to that surface, and they opened to the right of a 312px drawer.
+//
+//  Same casing as the bar and the player: textured metal deck, raised bevel,
+//  violet only where something is engaged.
+
+.SidePanel {
+  font-family: $font;
+  color: $text;
+}
+
+// =============================================================================
+//  PANEL CHASSIS  --  shared by every popup
+// =============================================================================
+
+//  Dimmed rather than blacked out: the wallpaper behind this is usually the
+//  thing you are about to change, so it stays legible through the scrim.
+//
+//  Graded from the centre out, not flat. A flat scrim makes the whole desktop
+//  recede equally and the panel has to fight for attention on its own; a
+//  vignette does that work for it -- the eye lands in the middle before it has
+//  read anything.
+.SidePanel panelScrim {
+  background-image: radial-gradient(
+    circle at center,
+    rgba($ink-700, 0.58) 0%,
+    rgba($ink-700, 0.74) 42%,
+    rgba($ink-700, 0.88) 100%
+  );
+}
+
+//  The case: dark brushed steel.
+//
+//  Was $grain over a PALE metal ramp under a heavy black wash, which is three
+//  mistakes compounding -- the grain's mid-frequency blotches tile visibly at
+//  this size, the pale ramp lifts them into view, and the black wash flattens
+//  whatever contrast survived. The result read as fog on concrete.
+//
+//  Now: $brushed (striations only, no blotches) over a ramp that is already
+//  dark, so no wash is needed to tame it and the bevels have something to
+//  catch against. Same material language, actually legible.
+.SidePanel panelCase {
+  padding: 14px 15px 13px 15px;
+  border-radius: 5px;
+
+  background-image:
+    $brushed,
+    linear-gradient(157deg, rgba($sheen, 0.07) 0%, rgba($sheen, 0) 38%),
+    linear-gradient(rgba($metal-960, 0.97), rgba($ink-100, 0.99));
+
+  @include raised;
+
+  //  Two shadows doing different jobs: a tight contact shadow that seats the
+  //  case on the desktop, and a wide soft one that lifts it off. One shadow
+  //  cannot be both without looking like a drop shadow in a slide deck.
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.7),
+    0 26px 64px rgba(0, 0, 0, 0.66);
+
+  animation: caseIn 160ms ease-out;
+}
+
+// ---- head -------------------------------------------------------------------
+
+//  A hairline pair, not a single border: one dark line and one light line
+//  directly beneath reads as a machined groove rather than as a drawn rule.
+.SidePanel panelHead {
+  padding-bottom: 8px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.55);
+  box-shadow: inset 0 -2px 0 -1px rgba($edge, 0.07);
+}
+
+.SidePanel panelTitle {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba($text, 0.88);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+//  Violet tick against the title, so the head has an accent without the title
+//  itself having to be coloured -- a coloured title competes with the readouts
+//  for "this is the important thing".
+.SidePanel panelTick {
+  min-width: 2px;
+  margin-right: 8px;
+  background-color: $violet-400;
+  box-shadow: 0 0 7px rgba($violet-400, 0.65);
+}
+
+.SidePanel button.panelClose {
+  min-width: 21px;
+  min-height: 19px;
+  padding: 0 7px;
+  border-radius: 3px;
+  font-size: 12px;
+  color: rgba($text, 0.55);
+  background-image: linear-gradient($metal-800, $metal-970);
+  @include raised;
+  transition: all 110ms ease-out;
+}
+
+.SidePanel button.panelClose:hover {
+  color: $danger-hi;
+  background-image: linear-gradient($metal-700, $metal-900);
+  border-color: rgba($danger, 0.6);
+  box-shadow: inset 0 0 9px rgba($danger, 0.28);
+}
+
+//  Pressed reverses the bevel. It is the cheapest way to make a flat widget
+//  feel like a real key, and it is what "responsive" actually means here --
+//  the surface answers the pointer before the action has done anything.
+.SidePanel button.panelClose:active {
+  @include sunken;
+  color: $danger;
+  background-image: linear-gradient($metal-970, $metal-900);
+}
+
+.SidePanel panelHint {
+  padding-top: 9px;
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: rgba($text, 0.3);
+}
+
+// ---- cover flow -------------------------------------------------------------
+//  Cards are real widgets, sheared by Gtk.Fixed through a Gsk.Transform -- so
+//  unlike a Cairo-drawn carousel they are styled from here and re-skin with the
+//  palette switcher along with everything else.
+
+//  The stage is given a generous width and the carousel derives its pitch from
+//  whatever it actually gets -- see place() in WallCarousel.tsx. Fixed pitch
+//  plus a narrower stage is what was slicing the outer cards off the edge.
+.SidePanel flowStage {
+  min-height: 480px;
+  min-width: 1180px;
+}
+
+.SidePanel flowCard {
+  border-radius: 4px;
+  background-image: linear-gradient($metal-600, $metal-970);
+  @include raised;
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.6),
+    0 16px 38px rgba(0, 0, 0, 0.68);
+  transition: all 140ms ease-out;
+}
+
+//  The card under the pointer lights its own edge. The carousel already scales
+//  the centred card, so this is deliberately an EDGE cue rather than another
+//  size cue -- two things saying "this one" by growing is just wobble.
+.SidePanel flowCard:hover {
+  border-color: rgba($violet-300, 0.55);
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.6),
+    0 16px 38px rgba(0, 0, 0, 0.68),
+    inset 0 0 22px rgba($violet-400, 0.3);
+}
+
+.SidePanel flowCardTitle {
+  padding: 4px 8px;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: rgba($text, 0.92);
+  background-color: rgba(0, 0, 0, 0.62);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95);
+}
+
+// ---- weather panel ----------------------------------------------------------
+
+// ---- shared readout rows ----------------------------------------------------
+//  These used to live under .Sidebar; the panels moved windows, so the rules
+//  follow them. Same treatment, so a row reads identically wherever it is.
+
+.SidePanel row {
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.28);
+}
+
+.SidePanel rowGlyph {
+  font-size: 12px;
+  color: rgba($violet-300, 0.72);
+}
+
+.SidePanel rowLabel {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: rgba($text, 0.66);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.SidePanel rowValue {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: $violet-300;
+}
+
+.SidePanel flowPanel {
+  padding-top: 2px;
+}
+
+.SidePanel wallRow {
+  padding: 2px 0;
+}
+
+// ============================
+// WEATHER
+// ============================
+//  Laid out like a desktop weather widget of the Vista era -- hero image, a
+//  sunset/sunrise rail, a thermometer beside four tiles around one big figure,
+//  and a five-day strip. The casing is still the deck's, so it sits next to the
+//  bar without looking borrowed.
+
+//  The artwork is the panel itself. Everything laid over it is translucent, so
+//  the picture reads the whole way down rather than being a strip at the top
+//  with plates covering the rest of it.
+//
+//  There is no background-image here on purpose: which picture to use depends
+//  on the weather, so it is set per-widget from state/weatherArt.ts through the
+//  `css` prop. Only the frame stays here.
+.SidePanel wxPanel {
+  padding: 0;
+  border-radius: 4px;
+  background-color: $ink-700;
+  @include sunken;
+}
+
+// ---- the stage --------------------------------------------------------------
+//  The instrument's own casing. Near-black, because everything inside it is
+//  projected light and light needs somewhere dark to be projected onto.
+
+.SidePanel wxStage {
+  background-color: $ink-700;
+}
+
+.SidePanel wxStageHead {
+  padding: 8px 11px 5px 11px;
+}
+
+.SidePanel wxStageFoot {
+  padding: 4px 11px 9px 11px;
+}
+
+.SidePanel wxStageTag {
+  font-size: 7px;
+  letter-spacing: 3px;
+  color: rgba($violet-300, 0.8);
+}
+
+.SidePanel wxStageNote {
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: rgba($text, 0.3);
+}
+
+//  The mesh reads its accent hue from this `color` through get_color(); see the
+//  note at the top of WeatherMesh.tsx. Nothing else styles it -- the widget
+//  paints every pixel of itself.
+.SidePanel wxMesh {
+  color: $violet-300;
+}
+
+//  The city model runs a cooler hue than the rest of the deck on purpose: it is
+//  the one surface showing somewhere real rather than a reading, and the shift
+//  is what separates "this is a place" from "this is a number".
+.SidePanel wxCity {
+  color: #6fd3ff;
+}
+
+// ---- readout rail -----------------------------------------------------------
+//  Hairline-separated cells rather than plates. The stage is the feature; a row
+//  of bevelled tiles under it would compete with it for depth.
+
+.SidePanel wxRail {
+  padding: 0;
+  background-color: $ink-600;
+  border-top: 1px solid rgba($violet-400, 0.16);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.6);
+}
+
+.SidePanel wxCell {
+  padding: 8px 3px;
+  background-color: transparent;
+  border-left: 1px solid rgba($violet-400, 0.1);
+  transition: all 130ms ease-out;
+  animation: rowIn 280ms ease-out backwards;
+}
+
+.SidePanel wxCell:first-child {
+  border-left: none;
+}
+
+.SidePanel wxCell:hover {
+  background-color: rgba($violet-700, 0.22);
+}
+
+.SidePanel wxCellLabel {
+  font-size: 6.5px;
+  letter-spacing: 2px;
+  color: rgba($text, 0.34);
+}
+
+.SidePanel wxCellValue {
+  font-size: 10px;
+  letter-spacing: 0;
+  color: rgba($violet-200, 0.95);
+}
+
+// ---- the week ---------------------------------------------------------------
+
+.SidePanel wxForecast {
+  padding: 8px 8px 10px 8px;
+  background-color: $ink-700;
+}
+
+.SidePanel wxDay {
+  padding: 7px 3px;
+  border-radius: 2px;
+  background-color: rgba($violet-990, 0.22);
+  border: 1px solid rgba($violet-400, 0.14);
+  transition: all 130ms ease-out;
+  animation: rowIn 280ms ease-out backwards;
+}
+
+.SidePanel wxDay:hover {
+  background-color: rgba($violet-800, 0.34);
+  border-color: rgba($violet-300, 0.5);
+  box-shadow: inset 0 0 14px rgba($violet-400, 0.25);
+}
+
+//  Today is where the NOW column stands on the surface above, so it is marked
+//  to tie the two together -- not highlighted, which would compete with it.
+.SidePanel wxDay.today {
+  border-bottom: 2px solid rgba($violet-300, 0.9);
+}
+
+.SidePanel wxDayName {
+  font-size: 7px;
+  letter-spacing: 1px;
+  color: rgba($text, 0.5);
+}
+
+.SidePanel wxDay.today wxDayName {
+  color: $violet-200;
+}
+
+.SidePanel wxDayGlyph {
+  font-size: 19px;
+  color: $violet-200;
+  text-shadow: 0 0 10px rgba($violet-400, 0.45);
+}
+
+.SidePanel wxDayHigh {
+  font-size: 10px;
+  color: rgba($text, 0.92);
+}
+
+.SidePanel wxDayLow {
+  font-size: 10px;
+  color: rgba($text, 0.38);
+}

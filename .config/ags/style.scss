@@ -1,0 +1,32 @@
+// =============================================================================
+//  STYLE  --  entry point
+// =============================================================================
+//  This file only wires the pieces together. There is no CSS here.
+//
+//  WHERE THINGS LIVE
+//    style/_palette.scss    every colour, as three swappable palettes
+//    style/_theme.scss      pick the palette + font; named colours; bevels
+//    style/_animations.scss @keyframes
+//    style/_<widget>.scss   one file per surface
+//
+//  TO RE-SKIN: edit style/_theme.scss. Nothing else.
+//
+//  ORDER MATTERS. Sass emits CSS in @use order, and some rules deliberately
+//  rely on "later wins" at equal specificity -- _fsgraph strips the metal back
+//  off the chassis rules _player sets up. Do not reorder these lines.
+//
+//  GTK CSS is not web CSS: no `body` node, no viewport units (vh/vw), no
+//  cascade from a widget's inline `css` prop to its children. It DOES support
+//  animation/@keyframes, transitions, gradients and background-blend-mode.
+//  https://docs.gtk.org/gtk4/css-properties.html
+// =============================================================================
+
+@use "style/animations";
+@use "style/bar";
+@use "style/player";
+@use "style/sidebar";
+@use "style/playspace";
+@use "style/floating";
+@use "style/fsgraph";
+@use "style/calendar";
+@use "style/osd";

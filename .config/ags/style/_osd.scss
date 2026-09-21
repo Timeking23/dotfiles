@@ -1,0 +1,112 @@
+@use "theme" as *;
+
+// =============================================================================
+//  OSD
+// =============================================================================
+//  The volume/brightness OSD, and the decorative corner stickers.
+// =============================================================================
+
+// ============================
+// OSD
+// ============================
+// Appears on a volume or brightness change and leaves on its own. Same deck as
+// everything else, a touch more opaque -- it is over arbitrary content, not the
+// wallpaper, so it cannot rely on what is behind it.
+
+.osd {
+  font-family: $font;
+}
+
+.osd osdDeck {
+  animation: osdIn 130ms ease-out;
+  padding: 10px 14px;
+  border-radius: 3px;
+  background-image:
+    $grunge,
+    linear-gradient(rgba($ink-100, 0.93), rgba($ink-300, 0.96));
+  @include raised;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+}
+
+.osd osdIcon {
+  font-size: 15px;
+  color: $violet-300;
+}
+
+.osd osdValue {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: $text;
+}
+
+// ---- tray and status ----
+
+.Bar tray {
+  padding: 0 2px;
+}
+
+.Bar button.trayItem {
+  min-width: 20px;
+  padding: 2px 4px;
+  border-radius: 2px;
+  background-image: none;
+  border: none;
+}
+
+.Bar button.trayItem:hover {
+  background-image: linear-gradient($metal-300, $metal-700);
+}
+
+// state lives in the colour, so the glyph never has to change size or move
+.Bar netStatus,
+.Bar btStatus {
+  font-size: 12px;
+  color: rgba($text, 0.45);
+}
+
+.Bar netStatus.up {
+  color: $text;
+}
+
+.Bar netStatus.down {
+  color: $danger-dim;
+}
+
+.Bar btStatus.on {
+  color: $text;
+}
+
+.Bar btStatus.linked {
+  color: $violet-300;
+}
+
+
+// ============================
+// STICKERS
+// ============================
+// Charms, not readouts -- the one place in this config where a pixel is not
+// backed by a live value. Kept quiet on purpose: full opacity next to the
+// oxidised metal reads as a rendering bug rather than as something stuck on.
+//
+// No transforms here: GTK4 CSS has no `transform`, so a jaunty tilt has to be
+// baked into the PNG itself.
+
+.stickerWindow {
+  background: transparent;
+}
+
+.sticker {
+  // GTK draws nothing for an empty box, but be explicit -- a stray background
+  // behind a cut-out PNG is the whole thing you were trying to avoid
+  background: none;
+  border: none;
+}
+
+.deskSticker {
+  opacity: 0.92;
+}
+
+// sat on the casing, so it takes the same knocked-back treatment the plates do
+.playerCharm {
+  opacity: 0.95;
+}

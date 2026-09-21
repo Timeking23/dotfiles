@@ -1,0 +1,235 @@
+// =============================================================================
+//  ANIMATIONS
+// =============================================================================
+//  GTK4 supports @keyframes and transitions. Keep them here so the widget
+//  files stay pure rules.
+// =============================================================================
+
+//  Needed for the accent colour in keyBreathe; the rest of this file is
+//  colourless and does not care which palette is loaded.
+@use "theme" as *;
+
+@keyframes musicBarGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes batteryPulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+// -----------------------------------------------------------------------------
+//  OPEN ANIMATIONS
+// -----------------------------------------------------------------------------
+//  GTK4 restarts a CSS animation each time a widget is mapped, so putting one
+//  on a toggled window's outermost box makes it replay on every open. That is
+//  the whole trick -- there is no "on show" hook needed.
+//
+//  transform IS supported in GTK4 (verified 2026-09-07); translate and scale
+//  both work. Durations stay short: this is heavy machinery, it should snap
+//  into place, not float.
+
+// drops out of the bar it hangs off
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(-7px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// the drawer slides in from the edge it is anchored to
+//  The drawer slides its full width, by transform -- 312px, matching
+//  widthRequest in widget/Sidebar.tsx. The old version travelled 16px, which at
+//  this width is a flinch rather than an opening.
+//
+//  Transform and not a GtkRevealer: a revealer slides by animating the child's
+//  ALLOCATION, and a ScrolledWindow shrinks rather than clipping, so the
+//  artwork squashed horizontally on the way out -- it stretched shut instead of
+//  sliding shut. A transform never touches layout.
+//
+//  Easing differs by direction on purpose: coming in decelerates into place
+//  (ease-out), going out accelerates away (ease-in), which is the usual
+//  convention and reads as the drawer being pushed rather than dropped.
+@keyframes drawerIn {
+  from {
+    opacity: 0;
+    transform: translateX(-312px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+//  `forwards` matters: without it the drawer snaps back to open for the handful
+//  of milliseconds between the keyframe ending and the window actually hiding.
+@keyframes drawerOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-312px);
+  }
+}
+
+// transient readouts just swell very slightly into view
+@keyframes osdIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// popovers grow from near their anchor
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// today's key breathes, so it is findable without being another colour
+//  Inset, not outer. The day keys are a homogeneous grid with 1px margins, so
+//  an outer halo lands under the neighbouring key and is painted over by its
+//  background -- it survives only in the gutter, which reads as nothing.
+@keyframes dayPulse {
+  0% {
+    box-shadow: inset 0 0 5px rgba(179, 164, 230, 0.30);
+  }
+  50% {
+    box-shadow: inset 0 0 12px rgba(179, 164, 230, 0.75);
+  }
+  100% {
+    box-shadow: inset 0 0 5px rgba(179, 164, 230, 0.30);
+  }
+}
+
+//  The sidebar's pink artwork breathing. Slow and shallow on purpose -- this
+//  sits behind text and frame keys, and anything faster reads as a fault light
+//  rather than as atmosphere. The trough is not 0: the low end of the pulse is
+//  already baked into sidebar-1.jpeg, so this layer only ever adds.
+//  The frame keys breathing, on a 7s period.
+//
+//  Inset, not an outer halo. Each key is hung inside a painted frame whose
+//  gilt border sits right against its edge, so an outer glow is swallowed by
+//  the artwork before it is ever visible -- the same reason :hover lights
+//  these from the inside.
+@keyframes keyBreathe {
+  0% {
+    box-shadow: inset 0 0 6px rgba($violet-300, 0.12);
+  }
+  50% {
+    box-shadow: inset 0 0 20px rgba($violet-300, 0.62);
+  }
+  100% {
+    box-shadow: inset 0 0 6px rgba($violet-300, 0.12);
+  }
+}
+
+// -----------------------------------------------------------------------------
+//  POPUP MOTION
+// -----------------------------------------------------------------------------
+//  GTK4 replays a CSS animation every time a widget is MAPPED, and the panel
+//  case is mapped fresh on every open -- so these need no trigger, no state and
+//  no JavaScript. Putting the animation on the widget IS the trigger.
+
+//  The case lands rather than floats: a short travel, a touch of scale, and an
+//  ease-out so it decelerates into place. 160ms is about the shortest duration
+//  that still reads as motion instead of a jump cut.
+@keyframes caseIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+//  Content rises in behind the case. Each row gets its own animation-delay,
+//  set inline from the widget's index -- GTK4 CSS only supports
+//  :nth-child(even|odd|first|last), so an nth-child(N) stagger is not available
+//  and the delay has to come from the widget side.
+@keyframes rowIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+//  Whatever is currently engaged breathes. Slow and shallow: this sits under
+//  type, and anything faster reads as a fault light rather than as "this one
+//  is live". Inset for the same reason the sidebar keys are -- an outer halo on
+//  a plate inside a tight stack is painted over by its neighbours.
+@keyframes engagedGlow {
+  0% {
+    box-shadow: inset 0 0 7px rgba($violet-200, 0.20);
+  }
+  50% {
+    box-shadow: inset 0 0 17px rgba($violet-200, 0.52);
+  }
+  100% {
+    box-shadow: inset 0 0 7px rgba($violet-200, 0.20);
+  }
+}
+
+//  The playspace zoom. Opening the board is the desktop zooming OUT, so it
+//  arrives a little too large and settles; closing zooms back IN toward the
+//  workspace you picked. Two keyframes rather than one reversed, because a CSS
+//  animation only ever plays on the way in -- see widget/Sidebar.tsx for the
+//  same problem and the same shape of fix.
+@keyframes psZoomOut {
+  from {
+    opacity: 0;
+    transform: scale(1.18);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes psZoomIn {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.18);
+  }
+}

@@ -1,0 +1,236 @@
+// =============================================================================
+//  PALETTES  --  every colour in the shell lives here
+// =============================================================================
+//  Nothing outside this file should contain a raw hex value.
+//
+//  SWITCH THE WHOLE SHELL: open style/_theme.scss and change one line:
+//      $palette-name: gunmetal;   ->   oxide  |  phosphor
+//
+//  MAKE YOUR OWN: copy a block, rename the key, edit the values. Every palette
+//  must define the same keys -- a missing key fails the build loudly, which
+//  beats a widget silently falling back to the stock GTK theme.
+//
+//  Ramps run light -> dark the way CSS frameworks number them: metal-100 is
+//  the brightest bevel highlight, metal-970 the deepest shadowed plate.
+//  Status colours (warn / danger) are identical in every palette on purpose:
+//  a critical battery must not change meaning because you re-skinned.
+// =============================================================================
+
+$palettes: (
+  // -------------------------------------------------------------------------
+  gunmetal: (
+    // metal
+    metal-100: #a9bcba,
+    metal-200: #8b9f9c,
+    metal-300: #7d928f,
+    metal-400: #6f8482,
+    metal-500: #6b807e,
+    metal-600: #5f7473,
+    metal-700: #55696b,
+    metal-750: #5c6668,
+    metal-800: #4a5d5f,
+    metal-900: #44585a,
+    metal-950: #3d4f51,
+    metal-960: #444c4e,
+    metal-970: #3b4749,
+    // violet
+    violet-100: #ece5ff,
+    violet-200: #ded4ff,
+    violet-250: #a493dc,
+    violet-300: #b3a4e6,
+    violet-400: #8171bd,
+    violet-500: #7d6cb8,
+    violet-600: #6f5fa8,
+    violet-650: #63549b,
+    violet-700: #5f5093,
+    violet-800: #574a86,
+    violet-900: #514678,
+    violet-950: #453b6c,
+    violet-990: #3f3660,
+    // ink
+    ink-100: #1b2426,
+    ink-150: #202b2d,
+    ink-200: #141b1e,
+    ink-300: #10171a,
+    ink-400: #0d1214,
+    ink-500: #0b1013,
+    ink-600: #080c0d,
+    ink-700: #05070a,
+    // lcd
+    lcd-on: #7fe3b0,
+    lcd-bg: #08100d,
+    lcd-dim: #0b1512,
+    lcd-plate: #26332f,
+    lcd-plate-hi: #35443f,
+    // grid
+    grid-plate: #263234,
+    // warn
+    warn: #d9c48a,
+    // danger
+    danger: #e8a0a0,
+    danger-hi: #ffd9d9,
+    danger-mid: #8a5f5f,
+    danger-lo: #5f3d3d,
+    danger-dim: #d99a9a,
+    // text
+    text: #cfe0dd,
+    // white
+    white: #ffffff,
+    // metal
+    edge: #d4e8e6,
+    sheen: #c4d8d6,
+    // ink
+    stamp: #0e1416,
+    // lcd
+    lcd-mid: #4a9674,
+    // ink
+    ink-800: #060a0c,
+    ink-050: #2c3a3c,
+    // metal
+    edge-dim: #d8e4e2,
+  ),
+  // -------------------------------------------------------------------------
+  oxide: (
+    // metal
+    metal-100: #bcb1a9,
+    metal-200: #9f938b,
+    metal-300: #92857d,
+    metal-400: #84776f,
+    metal-500: #80736b,
+    metal-600: #74675f,
+    metal-700: #6b5e55,
+    metal-750: #68615c,
+    metal-800: #5f524a,
+    metal-900: #5a4d44,
+    metal-950: #51453d,
+    metal-960: #4e4844,
+    metal-970: #49413b,
+    // violet
+    violet-100: #fff4e5,
+    violet-200: #ffecd4,
+    violet-250: #dcbc93,
+    violet-300: #e6c9a4,
+    violet-400: #bd9c71,
+    violet-500: #b8976c,
+    violet-600: #a8885f,
+    violet-650: #9b7c54,
+    violet-700: #937650,
+    violet-800: #866c4a,
+    violet-900: #786246,
+    violet-950: #6c573b,
+    violet-990: #604e36,
+    // ink
+    ink-100: #261f1b,
+    ink-150: #2d2420,
+    ink-200: #1e1714,
+    ink-300: #1a1310,
+    ink-400: #140f0d,
+    ink-500: #130e0b,
+    ink-600: #0d0a08,
+    ink-700: #0a0705,
+    // lcd
+    lcd-on: #e3c27f,
+    lcd-bg: #100d08,
+    lcd-dim: #15120b,
+    lcd-plate: #332f26,
+    lcd-plate-hi: #443f35,
+    // grid
+    grid-plate: #342c26,
+    // warn
+    warn: #d9c48a,
+    // danger
+    danger: #e8a0a0,
+    danger-hi: #ffd9d9,
+    danger-mid: #8a5f5f,
+    danger-lo: #5f3d3d,
+    danger-dim: #d99a9a,
+    // text
+    text: #e0d8cf,
+    // white
+    white: #ffffff,
+    // metal
+    edge: #e8dcd4,
+    sheen: #d8ccc4,
+    // ink
+    stamp: #16110e,
+    // lcd
+    lcd-mid: #967d4a,
+    // ink
+    ink-800: #0c0806,
+    ink-050: #3c312c,
+    // metal
+    edge-dim: #e4ddd8,
+  ),
+  // -------------------------------------------------------------------------
+  phosphor: (
+    // metal
+    metal-100: #a9bcb4,
+    metal-200: #8b9f97,
+    metal-300: #7d9289,
+    metal-400: #6f847b,
+    metal-500: #6b8077,
+    metal-600: #5f746b,
+    metal-700: #556b62,
+    metal-750: #5c6863,
+    metal-800: #4a5f56,
+    metal-900: #445a51,
+    metal-950: #3d5149,
+    metal-960: #444e4a,
+    metal-970: #3b4943,
+    // violet
+    violet-100: #f3ffe5,
+    violet-200: #ebffd4,
+    violet-250: #badc93,
+    violet-300: #c7e6a4,
+    violet-400: #9abd71,
+    violet-500: #95b86c,
+    violet-600: #86a85f,
+    violet-650: #7a9b54,
+    violet-700: #749350,
+    violet-800: #6a864a,
+    violet-900: #617846,
+    violet-950: #556c3b,
+    violet-990: #4c6036,
+    // ink
+    ink-100: #1b2620,
+    ink-150: #202d27,
+    ink-200: #141e19,
+    ink-300: #101a15,
+    ink-400: #0d1410,
+    ink-500: #0b130f,
+    ink-600: #080d0b,
+    ink-700: #050a08,
+    // lcd
+    lcd-on: #7fe37f,
+    lcd-bg: #081008,
+    lcd-dim: #0b150b,
+    lcd-plate: #263326,
+    lcd-plate-hi: #354435,
+    // grid
+    grid-plate: #26342e,
+    // warn
+    warn: #d9c48a,
+    // danger
+    danger: #e8a0a0,
+    danger-hi: #ffd9d9,
+    danger-mid: #8a5f5f,
+    danger-lo: #5f3d3d,
+    danger-dim: #d99a9a,
+    // text
+    text: #cfe0d8,
+    // white
+    white: #ffffff,
+    // metal
+    edge: #d4e8e0,
+    sheen: #c4d8d0,
+    // ink
+    stamp: #0e1612,
+    // lcd
+    lcd-mid: #4a964a,
+    // ink
+    ink-800: #060c09,
+    ink-050: #2c3c34,
+    // metal
+    edge-dim: #d8e4df,
+  ),
+);

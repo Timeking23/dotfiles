@@ -1,0 +1,167 @@
+@use "theme" as *;
+
+// =============================================================================
+//  FLOATING
+// =============================================================================
+//  The settings panel that drops out of the battery button. Two row shapes
+//  only -- a Toggle and a Level -- so adding a setting never adds a layout.
+// =============================================================================
+
+.Floating {
+  font-family: $font;
+  color: $text;
+}
+
+.Floating setShell {
+  animation: panelIn 160ms ease-out;
+  padding: 4px;
+  border-radius: 3px;
+  background-image:
+    $grunge,
+    linear-gradient(158deg, rgba($sheen, 0.2) 0%, rgba($sheen, 0) 34%),
+    linear-gradient(22deg, rgba(0, 0, 0, 0.34) 0%, rgba(0, 0, 0, 0) 46%),
+    linear-gradient($metal-400, $metal-900);
+  @include raised;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.7);
+}
+
+// ---- head -------------------------------------------------------------------
+
+.Floating setHead {
+  padding: 3px 4px 5px 6px;
+}
+
+.Floating setTitle {
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: rgba($stamp, 0.8);
+  text-shadow: 0 1px 0 rgba($edge, 0.28);
+}
+
+.Floating button.setClose {
+  min-width: 13px;
+  min-height: 13px;
+  padding: 0;
+  border-radius: 1px;
+  color: $text;
+  background-image: linear-gradient($metal-500, $metal-800);
+  @include raised;
+  transition: none;
+}
+
+.Floating button.setClose label {
+  font-size: 9px;
+}
+
+.Floating button.setClose:hover {
+  color: $danger-hi;
+  background-image: linear-gradient($danger-mid, $danger-lo);
+}
+
+// ---- rows -------------------------------------------------------------------
+//  One sunken plate per setting, so each reads as its own module bolted to the
+//  deck rather than as a list.
+
+.Floating setBody {
+  padding: 1px 2px 2px 2px;
+}
+
+.Floating setRow {
+  padding: 6px 7px;
+  margin-bottom: 3px;
+  border-radius: 2px;
+  background-image: $grain, linear-gradient($ink-100, $ink-300);
+  @include sunken;
+}
+
+//  the key is the control: press it to toggle, and it stays lit while on
+.Floating button.setKey {
+  min-width: 34px;
+  padding: 4px 7px;
+  border-radius: 2px;
+  color: $text;
+  background-image: $grunge, linear-gradient($metal-500, $metal-800);
+  @include raised;
+  transition: box-shadow 140ms ease-out;
+}
+
+.Floating button.setKey label {
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+.Floating button.setKey:hover {
+  background-image: $grunge, linear-gradient($metal-300, $metal-700);
+}
+
+//  lit from inside, same trick as the calendar keys: an outer halo on a plate
+//  this tight is clipped by its neighbour
+.Floating button.setKey.on {
+  color: $violet-100;
+  background-image: linear-gradient($violet-990, $violet-800);
+  @include sunken;
+  box-shadow: inset 0 0 10px rgba($violet-300, 0.6);
+  text-shadow: 0 0 7px rgba($violet-300, 0.9);
+}
+
+.Floating setStatus {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: rgba($lcd-on, 0.85);
+  text-shadow: 0 0 6px rgba($lcd-on, 0.35);
+}
+
+.Floating setReadout {
+  min-width: 34px;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: rgba($lcd-on, 0.85);
+  text-shadow: 0 0 6px rgba($lcd-on, 0.35);
+}
+
+.Floating button.setMore {
+  min-width: 18px;
+  padding: 2px 5px;
+  border-radius: 2px;
+  color: rgba($text, 0.75);
+  background-image: linear-gradient($metal-500, $metal-800);
+  @include raised;
+  transition: none;
+}
+
+.Floating button.setMore label {
+  font-size: 8px;
+}
+
+.Floating button.setMore:hover {
+  color: $violet-300;
+  background-image: linear-gradient($metal-300, $metal-700);
+}
+
+// ---- sliders ----------------------------------------------------------------
+//  GTK4 splits a scale into trough / highlight / slider.
+
+.Floating scale {
+  padding: 4px 2px;
+}
+
+.Floating scale trough {
+  min-height: 5px;
+  border-radius: 1px;
+  background-image: $grain, linear-gradient($ink-500, $ink-150);
+  @include sunken;
+}
+
+.Floating scale highlight {
+  border-radius: 1px;
+  background-image: linear-gradient(rgba($lcd-on, 0.85), rgba($lcd-mid, 0.85));
+}
+
+.Floating scale slider {
+  min-width: 12px;
+  min-height: 13px;
+  margin: -5px;
+  border-radius: 1px;
+  background-image: $grunge, linear-gradient($metal-200, $metal-800);
+  @include raised;
+}

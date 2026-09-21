@@ -1,0 +1,99 @@
+@use "theme" as *;
+
+// =============================================================================
+//  PLAYSPACE  --  every window, one at a time, inside a picture frame
+// =============================================================================
+
+$nier-ground: #c9c3a8;
+$nier-ink:    #4b4741;
+$nier-dim:    rgba(201, 195, 168, 0.55);
+$frame: url("file:///home/ryona/Pictures/GUI/scratch.jpg");
+
+//  Black behind the frame. The frame is stretched to the screen so it should
+//  cover completely, but a mismatched aspect must not show the desktop through.
+.Playspace {
+  background-color: #000;
+}
+
+//  The frame picture, RESHAPED to the screen.
+//
+//  background-size: 100% 100% rather than cover: the carved border has to stay
+//  the same proportion of the screen on any display, and `cover` would crop the
+//  carving off the short edge on anything that is not 3:2.
+.Playspace psFrame {
+  background-image: $frame;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  animation: psZoomOut 220ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.Playspace psFrame.closing {
+  animation: psZoomIn 220ms cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
+}
+
+//  Sits in the frame's opening -- margins are set from the monitor size in
+//  widget/Playspace.tsx, because GTK4 CSS has no percentage margins.
+//  Darkened so the window pictures read against the photograph behind them.
+.Playspace psStage {
+  background-color: rgba(8, 9, 8, 0.965);
+  border: 1px solid rgba(201, 195, 168, 0.22);
+}
+
+// ---- one window ------------------------------------------------------------
+
+.Playspace psPage {
+  padding: 18px 22px;
+}
+
+.Playspace psPageHead {
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(201, 195, 168, 0.25);
+}
+
+.Playspace psPageWs {
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 2px 9px;
+  color: $nier-ink;
+  background-color: $nier-ground;
+}
+
+.Playspace psPageClass {
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: $nier-ground;
+}
+
+.Playspace psPageCount {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: $nier-dim;
+}
+
+//  The window itself, given the whole stage. CONTAIN not COVER: this is the
+//  one place the picture is big enough that cropping it would lose real
+//  content, and letterboxing an arbitrary window aspect is the honest choice.
+.Playspace psPageShot {
+  border: 1px solid rgba(201, 195, 168, 0.3);
+}
+
+.Playspace psPageGlyph {
+  font-size: 84px;
+  color: rgba(201, 195, 168, 0.5);
+}
+
+.Playspace psPageTitle {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: $nier-dim;
+}
+
+//  The channel number. Held off the frame's inner edge so it sits ON the
+//  picture rather than against the carving.
+.Playspace psChannel {
+  //  Held well clear of the corner: the CRT shader bows the picture outwards,
+  //  so anything tight to the edge gets bent off the glass.
+  margin-right: 40px;
+  margin-bottom: 30px;
+}

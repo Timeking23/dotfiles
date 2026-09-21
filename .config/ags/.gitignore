@@ -1,0 +1,5 @@
+node_modules/
+@girs/
+
+# holds a Notion integration token
+state/notion.json

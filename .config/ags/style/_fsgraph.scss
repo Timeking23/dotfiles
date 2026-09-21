@@ -1,0 +1,141 @@
+@use "theme" as *;
+
+// =============================================================================
+//  FSGRAPH
+// =============================================================================
+//  The filesystem graph. Shares the player's chassis rules, then strips
+//  the metal back off -- equal specificity, so ORDER MATTERS: this must be
+//  @used after the player.
+// =============================================================================
+
+// ============================
+// FILESYSTEM GRAPH
+// ============================
+// Shares the chassis/headerPlate/graphPlate rules above; only the extra path
+// slot in the header is unique to this window.
+
+.fsgraph {
+  font-family: $font;
+}
+
+.fsgraph headerPath {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: rgba($text, 0.62);
+  padding-left: 7px;
+}
+
+// ---- transparent casing ----
+// The graph is the only thing on this window worth looking at, so the metal
+// comes off and it floats on the wallpaper. One knob: raise $fsgraph-tint's
+// alpha to lay a scrim back under it if a busy wallpaper eats the nodes.
+// (These follow the shared rules above, so equal specificity -- later wins.)
+$fsgraph-tint: rgba($ink-800, 0);
+
+.fsgraph chassis {
+  background-image: none;
+  background-color: $fsgraph-tint;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.fsgraph headerPlate {
+  background-image: none;
+  background-color: transparent;
+  border: none;
+  padding: 2px 3px;
+  margin-bottom: 4px;
+}
+
+.fsgraph graphPlate {
+  background-image: none;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+}
+
+// nothing behind the type any more, so every label carries its own contrast
+.fsgraph headerTitle,
+.fsgraph headerPath,
+.fsgraph headerStatus {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+// ---- zoom keys ----
+// Overlaid on the graph itself, so they stay quiet until the pointer is on
+// them: the graph is the signal, these are just a way to reach it.
+
+.fsgraph graphControls {
+  margin: 3px;
+}
+
+.fsgraph button.zoomKey {
+  min-width: 20px;
+  min-height: 18px;
+  padding: 0 4px;
+  border-radius: 2px;
+  background-image: none;
+  background-color: rgba($ink-500, 0.55);
+  border: 1px solid rgba($violet-300, 0.22);
+  box-shadow: none;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: rgba($text, 0.55);
+  transition: 120ms;
+}
+
+.fsgraph button.zoomKey:hover {
+  background-color: rgba($ink-300, 0.85);
+  border-color: rgba($violet-300, 0.55);
+  color: $violet-300;
+}
+
+.fsgraph button.zoomKey:active {
+  background-color: rgba($violet-700, 0.75);
+  color: $violet-200;
+}
+
+// ---- transparent casing ----
+// Same treatment as .fsgraph: the readouts are the widget, the metal was only
+// ever a frame around them. One knob, as there -- raise the tint's alpha to put
+// a scrim back under the whole panel on a busy wallpaper.
+// (These follow the shared rules above, so equal specificity -- later wins.)
+$sysmon-tint: rgba($ink-800, 0);
+
+.sysmon chassis {
+  background-image: none;
+  background-color: $sysmon-tint;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.sysmon screenHousing,
+.sysmon graphPlate,
+.sysmon meterPlate {
+  background-image: none;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+}
+
+.sysmon screenHousing {
+  margin-bottom: 8px;
+}
+
+// nothing behind the type any more, so every label carries its own contrast
+.sysmon sectionLabel,
+.sysmon sectionValue,
+.sysmon meterLabel,
+.sysmon meterValue,
+.sysmon meterIcon {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+// was dark-on-metal with a light emboss; on the wallpaper it has to invert
+.sysmon sectionCaption {
+  color: rgba($text, 0.62);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+  padding: 6px 2px 4px 2px;
+}

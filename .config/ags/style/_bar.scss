@@ -1,0 +1,127 @@
+@use "theme" as *;
+
+// =============================================================================
+//  BAR
+// =============================================================================
+//  The top bar and the battery readout that hangs off it, plus the GTK
+//  tooltip window (a separate toplevel, so its rules must sit unscoped).
+// =============================================================================
+
+// ============================
+// BAR
+// ============================
+// Same casing language as the player: textured metal deck, plates bolted on,
+// violet only where something is engaged.
+
+.Bar {
+  font-family: $font;
+  font-size: 12px;
+  color: $text;
+  background-image:
+    $grunge,
+    linear-gradient(rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.35)),
+    linear-gradient($metal-400, $metal-900);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.65);
+}
+
+.Bar centerbox {
+  padding: 3px 8px;
+}
+
+.Bar button {
+  padding: 2px 9px;
+  border-radius: 2px;
+  color: $text;
+  background-image: $grunge, linear-gradient($metal-500, $metal-800);
+  @include raised;
+  transition: none;
+}
+
+.Bar button:hover {
+  background-image: linear-gradient($metal-300, $metal-700);
+}
+
+// focused workspace reads as a key pressed into the deck
+.Bar button.focused {
+  color: $violet-300;
+  background-image: linear-gradient($violet-990, $violet-800);
+  @include sunken;
+}
+
+.Bar button.music {
+  color: $violet-100;
+  background-image: $grunge, linear-gradient($violet-600, $violet-950);
+  @include raised;
+}
+
+.Bar button.music:hover {
+  background-image: linear-gradient($violet-400, $violet-900);
+}
+
+// ============================
+// BATTERY
+// ============================
+// One class per state. Charging wins over level, so a plugged-in 5% battery
+// reads as calm rather than as an emergency.
+
+.battery {
+  color: $text;
+}
+
+.battery.charging,
+.battery.charged {
+  color: $violet-300;
+}
+
+.battery.low {
+  color: $warn;
+}
+
+.battery.critical {
+  color: $danger;
+  animation: batteryPulse 2s ease infinite;
+}
+
+// ---- battery popup ----
+// The hovered readout is a GtkTooltipWindow: a separate toplevel, so it never
+// inherits from .Bar and these rules have to sit unscoped at the root. Left
+// alone it arrives in whatever Matcha-dark-sea thinks a tooltip is -- purple,
+// rounded, from a different decade than everything else on the deck. Pitched
+// a stop darker than a bar button so it reads as a plate lifted off the rail
+// rather than a chip of the rail floating in mid-air.
+tooltip,
+tooltip.background {
+  animation: popIn 110ms ease-out;
+  background-color: transparent;
+  border-radius: 2px;
+  background-image:
+    $grunge,
+    linear-gradient(158deg, rgba($sheen, 0.14) 0%, rgba($sheen, 0) 34%),
+    linear-gradient(22deg, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0) 48%),
+    linear-gradient($metal-970, $ink-150);
+  @include raised;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.7);
+}
+
+tooltip label {
+  padding: 3px 7px;
+  font-family: $font;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: $text;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+}
+
+// ---- palette switcher -------------------------------------------------------
+//  Deliberately styled from the ramp rather than hardcoded, so the button
+//  re-skins along with everything else when you press it.
+.Bar button.palette {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: $violet-300;
+}
+
+.Bar button.palette label {
+  font-size: 8px;
+  letter-spacing: 1px;
+}
