@@ -3,3 +3,7 @@ node_modules/
 
 # holds a Notion integration token
 state/notion.json
+
+# Python bytecode from the asset generator scripts
+__pycache__/
+*.pyc
