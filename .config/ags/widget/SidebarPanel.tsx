@@ -2,6 +2,7 @@ import app from "ags/gtk4/app"
 import { Astal, Gtk, Gdk } from "ags/gtk4"
 import { onCleanup } from "ags"
 
+import PowerProfile from "./PowerProfile"
 import WallCarousel from "./WallCarousel"
 import Weather from "./Weather"
 import { activePanel, closePanel, openPanel, panelOpen, type PanelKey } from "../state/panel"
@@ -27,7 +28,18 @@ import { activePanel, closePanel, openPanel, panelOpen, type PanelKey } from "..
 const TITLES: Record<PanelKey, string> = {
   weather: "WEATHER",
   wallpaper: "WALLPAPER",
+  power: "POWER PROFILE",
 }
+
+/**
+ * Pages that want the flat casing instead of the brushed-steel one.
+ *
+ * The case is shared, so this is a class on the shell rather than a second
+ * window: `power` is a settings page, and the bevels that make the weather
+ * instrument read as hardware make a list of three choices read as a control
+ * panel from 1998. See `.SidePanel panelCase.flat` in style/_power.scss.
+ */
+const FLAT: ReadonlySet<PanelKey> = new Set<PanelKey>(["power"])
 
 export default function SidebarPanel(gdkmonitor: Gdk.Monitor) {
   const { TOP, LEFT, RIGHT, BOTTOM } = Astal.WindowAnchor
@@ -52,6 +64,7 @@ export default function SidebarPanel(gdkmonitor: Gdk.Monitor) {
 
   stack.add_named((<Weather />) as Gtk.Widget, "weather")
   stack.add_named((<WallCarousel />) as Gtk.Widget, "wallpaper")
+  stack.add_named((<PowerProfile />) as Gtk.Widget, "power")
 
   /**
    * The scrim is set with set_child, not passed as a JSX child.
@@ -151,6 +164,16 @@ export default function SidebarPanel(gdkmonitor: Gdk.Monitor) {
         const drop = activePanel.subscribe(() => {
           const key = activePanel.peek()
           if (key) stack.set_visible_child_name(key)
+
+          //  Swapped on the shell, not on the window: the scrim is a sibling
+          //  of the case and should stay exactly as it is on every page.
+          //  Left alone on close -- `key` is null then, and stripping the
+          //  class mid-fade would re-bevel the case while it is still on
+          //  screen.
+          if (key) {
+            if (FLAT.has(key)) shell.add_css_class("flat")
+            else shell.remove_css_class("flat")
+          }
         })
 
         /**

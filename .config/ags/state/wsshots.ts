@@ -48,10 +48,30 @@ import { execAsync } from "ags/process"
 
 const hyprland = AstalHyprland.get_default()
 
-const SHOT = `${GLib.get_user_cache_dir()}/ags/wsshot.png`
+//  tmpfs (/run/user/$UID), NOT ~/.cache. This file is written by grim and then
+//  read straight back to be decoded a millisecond later; nothing ever wants it
+//  again. On the nvme that pointless round trip was the single largest source of
+//  IO stall on the machine. In RAM it is free.
+//
+//  .ppm because the only consumer is GdkPixbuf, immediately. PNG spends CPU
+//  deflating an image that is about to be thrown away: measured on this machine
+//  a frame decodes in 10.9ms as ppm against 31.3ms as png.
+const SHOT = `${GLib.get_user_runtime_dir()}/ags-wsshot.ppm`
 
-/** Half of a 2x display: 1:1 with Hyprland's logical pixels. */
-const SCALE = "0.5"
+/**
+ * grim's -s is an ABSOLUTE scale -- output pixels per LOGICAL pixel -- and not
+ * a multiplier on the monitor's own scale. This display is 2880x1800 at scale 2,
+ * so logical space is 1440x900 and `-s 1` produces exactly 1440x900: a window
+ * Hyprland reports at [7,44] 1426x849 sits at [7,44] 1426x849 in the capture,
+ * with no conversion anywhere.
+ *
+ * This was "0.5", which yields 720x450 -- half of logical space, not equal to
+ * it. Every crop below was then clamped to fit inside an image half the size it
+ * was assumed to be, so a full-width window was cropped to the left ~half of
+ * the screen and the other windows to slivers. Thumbnails were showing the
+ * wrong region, and upscaling a 713px crop to THUMB_W besides.
+ */
+const SCALE = "1"
 
 /**
  * Stored thumbnail width, in pixels -- and this is ALSO the size they draw at.
@@ -88,17 +108,37 @@ export function suspendCapture(value: boolean) {
 
 let pending = 0
 
+/** A capture is in flight right now. */
+let capturing = false
+
+/** Something moved while a capture was in flight; re-shoot once it lands. */
+let restage = false
+
 function scheduleCapture() {
+  //  Debounce -- but note this only ever cancels a PENDING TIMER. It cannot
+  //  stop a capture that has already begun; `capturing` below does that.
   if (pending) GLib.source_remove(pending)
   pending = GLib.timeout_add(GLib.PRIORITY_DEFAULT_IDLE, SETTLE_MS, () => {
     pending = 0
-    capture()
+    void capture()
     return GLib.SOURCE_REMOVE
   })
 }
 
 async function capture() {
   if (suspended) return
+
+  //  Without this the debounce is not a rate limit at all: the timer fires,
+  //  clears `pending`, and starts an async capture -- and the next event arms a
+  //  fresh timer immediately, which fires while the first grim is still running.
+  //  A capture costs far more than the interval between the events that trigger
+  //  it, so they piled up; three concurrent grims, each copying the whole
+  //  output, was the steady state. Coalesce instead: one in flight, and at most
+  //  one re-shoot queued behind it, however many events arrive meanwhile.
+  if (capturing) {
+    restage = true
+    return
+  }
 
   const id = hyprland.focusedWorkspace?.id
   if (typeof id !== "number" || id <= 0) return
@@ -110,9 +150,9 @@ async function capture() {
   )
   if (!windows.length) return
 
+  capturing = true
   try {
-    GLib.mkdir_with_parents(GLib.path_get_dirname(SHOT), 0o755)
-    await execAsync(["grim", "-s", SCALE, SHOT])
+    await execAsync(["grim", "-s", SCALE, "-t", "ppm", SHOT])
 
     const full = GdkPixbuf.Pixbuf.new_from_file(SHOT)
     const fw = full.get_width()
@@ -143,13 +183,26 @@ async function capture() {
     setShots(next)
   } catch (error) {
     console.warn("wsshots: capture failed:", error)
+  } finally {
+    capturing = false
+
+    //  Events that arrived mid-flight were dropped on the floor; honour the
+    //  last of them now, through the debounce so a burst still collapses.
+    if (restage) {
+      restage = false
+      scheduleCapture()
+    }
   }
 }
 
 //  A closed window's picture is dead weight; drop it. Nothing else evicts,
 //  which is the point -- a window keeps its picture wherever it is moved to.
-hyprland.connect("client-removed", (_source: unknown, client: AstalHyprland.Client) => {
-  const address = client?.address
+//  The signal is `client-removed(gchararray)` -- it carries the ADDRESS, not a
+//  Client. Typed as a Client this read `(<string>)?.address`, which is always
+//  undefined, so the guard below returned every single time and nothing was
+//  ever evicted: every window ever opened kept its texture for the life of the
+//  shell. At THUMB_W that is megabytes per window, never freed.
+hyprland.connect("client-removed", (_source: unknown, address: string) => {
   if (!address) return
 
   const next = { ...shots.peek() }
@@ -159,9 +212,41 @@ hyprland.connect("client-removed", (_source: unknown, client: AstalHyprland.Clie
   }
 })
 
-//  Captured on change rather than on a timer: a poll would spend 285ms every
-//  few seconds photographing a screen that has not moved.
-hyprland.connect("event", () => scheduleCapture())
+/**
+ * The Hyprland IPC events that change what the screen LOOKS like.
+ *
+ * The bare "event" signal is a firehose: it carries every event Hyprland emits,
+ * and the loudest by far is `windowtitle`, which fires whenever any window
+ * relabels itself. A browser does that on every tab switch, page load and
+ * progress tick -- so with a browser open, this re-photographed the entire
+ * output roughly twice a second, forever, and the machine spent ~43% of its
+ * wall time with every task stalled on IO.
+ *
+ * `activewindow` is excluded for the same reason: its payload carries the
+ * focused window's title, so Hyprland re-emits it on title changes too. A focus
+ * change moves a border, not a window.
+ */
+const REPAINTS = new Set([
+  "workspace",
+  "workspacev2",
+  "focusedmon",
+  "focusedmonv2",
+  "activespecial",
+  "closewindow",
+  "movewindow",
+  "movewindowv2",
+  "fullscreen",
+  "changefloatingmode",
+  "pin",
+  "togglegroup",
+])
+
+//  Captured on change rather than on a timer: a poll would spend a whole
+//  capture every few seconds photographing a screen that has not moved.
+//  `openwindow` is absent deliberately -- `client-added` below covers it.
+hyprland.connect("event", (_source: unknown, event: string) => {
+  if (REPAINTS.has(event)) scheduleCapture()
+})
 hyprland.connect("client-added", () => scheduleCapture())
 hyprland.connect("client-moved", () => scheduleCapture())
 

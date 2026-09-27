@@ -5,6 +5,7 @@ import GLib from "gi://GLib?version=2.0"
 import { weatherCondition, weatherGlyph, weatherLabel } from "../state/weather"
 import { positionLabel } from "../state/wallpaper"
 import { activePanel, togglePanel, type PanelKey } from "../state/panel"
+import { profileGlyph, profileShort } from "../state/profile"
 
 /**
  * The drawer is a picture of three empty frames; this hangs one key in each.
@@ -350,6 +351,19 @@ export default function Sidebar(gdkmonitor: Gdk.Monitor) {
             glyph={weatherGlyph}
             readout={weatherLabel}
             tooltip={weatherCondition((c) => `Weather · ${c.toLowerCase()}`)}
+          />
+        </box>
+
+        <box $type="overlay" valign={Gtk.Align.START} $={hold(1)} halign={Gtk.Align.FILL}>
+          <FrameKey
+            title="POWER"
+            kind="keyPower"
+            panel="power"
+            // the tier's own glyph, so the key changes shape with the profile
+            // rather than only changing the word on the chip below it
+            glyph={profileGlyph}
+            readout={profileShort}
+            tooltip="Platform profile and fan curve"
           />
         </box>
 

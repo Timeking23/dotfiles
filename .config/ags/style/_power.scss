@@ -1,0 +1,453 @@
+// =============================================================================
+//  POWER  --  the one flat surface in the deck
+// =============================================================================
+//  Everything else here is hardware: brushed plates, machined grooves, bevels
+//  that catch light. That language works for an instrument, where the point is
+//  that you are reading a machine. It works badly for a settings page, where
+//  the point is three choices and a switch -- moulded into steel, those read as
+//  a Windows 98 control panel rather than as something you would want to touch.
+//
+//  So this page opts out. `panelCase.flat` is set from SidebarPanel.tsx while
+//  the power page is showing, and the rules below strip the case back to one
+//  flat surface, one hairline and one soft shadow: no texture, no bevel, no
+//  gradient doing the work of a border.
+//
+//  What it keeps is the PALETTE. The accent is still $violet, the text is still
+//  $text, so this re-skins with the palette switcher along with everything else
+//  and does not become a second theme to maintain.
+//
+//  GTK CSS, not web CSS: no max-width (label `wrap` + `maxWidthChars` instead),
+//  no viewport units, no cascade into children from an inline `css` prop.
+// =============================================================================
+
+@use "theme" as *;
+
+// -----------------------------------------------------------------------------
+//  THE CASE
+// -----------------------------------------------------------------------------
+//  Higher specificity than the base `.SidePanel panelCase`, so the brushed
+//  steel is overridden wherever this is more specific and inherited wherever it
+//  is not -- the animation and the centring still come from there.
+
+.SidePanel panelCase.flat {
+  padding: 20px 22px 15px 22px;
+  border-radius: 14px;
+
+  //  One flat surface. The faint top-down gradient is not decoration: it is
+  //  what stops a 480px plate of a single flat colour from reading as a hole
+  //  cut in the desktop.
+  background-image: linear-gradient(rgba($ink-300, 0.985), rgba($ink-400, 0.995));
+
+  //  A hairline, not a bevel. @include raised is four different border colours
+  //  pretending to be lit from the top left; this is one line that says "edge".
+  border: 1px solid rgba($edge, 0.1);
+
+  //  A single soft shadow with a long falloff, rather than the contact +
+  //  ambient pair the steel case uses. Nothing here is sitting ON the desktop;
+  //  it is floating over it.
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.62);
+}
+
+// ---- head -------------------------------------------------------------------
+
+.SidePanel panelCase.flat panelHead {
+  padding-bottom: 14px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba($edge, 0.07);
+  //  kills the machined groove from _sidebar.scss -- one line, not two
+  box-shadow: none;
+}
+
+//  Readable as a heading rather than as a stamped legend. 3px of tracking on
+//  9px caps is a label on a panel of instruments; this is a page title.
+.SidePanel panelCase.flat panelTitle {
+  font-size: 12px;
+  letter-spacing: 1.4px;
+  color: rgba($text, 0.95);
+  text-shadow: none;
+}
+
+.SidePanel panelCase.flat panelTick {
+  min-width: 3px;
+  margin: 1px 10px 1px 0;
+  border-radius: 2px;
+  background-color: $violet-400;
+  //  no glow: the steel case needs the tick to look lit, a flat page does not
+  box-shadow: none;
+}
+
+//  A round ghost button, the way a modern dialog closes.
+.SidePanel panelCase.flat button.panelClose {
+  min-width: 24px;
+  min-height: 24px;
+  padding: 0;
+  border-radius: 12px;
+  font-size: 14px;
+  color: rgba($text, 0.45);
+  background-image: none;
+  background-color: rgba($white, 0.04);
+  border: 1px solid transparent;
+  box-shadow: none;
+  transition:
+    background-color 130ms ease-out,
+    color 130ms ease-out;
+}
+
+.SidePanel panelCase.flat button.panelClose:hover {
+  color: $danger-hi;
+  background-color: rgba($danger, 0.16);
+  background-image: none;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.SidePanel panelCase.flat button.panelClose:active {
+  background-color: rgba($danger, 0.26);
+  background-image: none;
+  //  @include sunken inverts the bevel on the steel case. There is no bevel
+  //  here to invert, so pressed is just a darker fill.
+  border: 1px solid transparent;
+}
+
+.SidePanel panelCase.flat panelHint {
+  padding-top: 12px;
+  font-size: 9px;
+  letter-spacing: 0.4px;
+  color: rgba($text, 0.26);
+}
+
+// -----------------------------------------------------------------------------
+//  THE PAGE
+// -----------------------------------------------------------------------------
+
+pwrPanel {
+  //  Sized so the three cards get room to breathe without the blurbs wrapping
+  //  to four lines. The stack is non-homogeneous, so this does not push the
+  //  weather or wallpaper pages around.
+  min-width: 560px;
+}
+
+// ---- section furniture ------------------------------------------------------
+
+//  The one place tracked caps survive on this page: a section label is a
+//  legend, not prose, and it is doing the job a <h3> does on a web page.
+pwrSectionLabel {
+  margin: 4px 2px 9px 2px;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba($text, 0.38);
+}
+
+pwrRule {
+  min-height: 1px;
+  margin: 16px 0 14px 0;
+  background-color: rgba($edge, 0.07);
+}
+
+// ---- the three choices ------------------------------------------------------
+
+pwrTiers {
+  margin-top: 4px;
+}
+
+//  A card, not a plate. Flat fill, hairline, generous radius -- and it lifts on
+//  hover rather than pretending to be pressed, because the thing it resembles
+//  is a button on a page, not a key on a deck.
+.SidePanel button.pwrTier {
+  padding: 0;
+  border-radius: 10px;
+  background-image: none;
+  background-color: rgba($white, 0.028);
+  border: 1px solid rgba($edge, 0.08);
+  box-shadow: none;
+  transition:
+    background-color 150ms ease-out,
+    border-color 150ms ease-out,
+    box-shadow 150ms ease-out;
+}
+
+.SidePanel button.pwrTier:hover {
+  background-color: rgba($white, 0.055);
+  border-color: rgba($edge, 0.16);
+}
+
+//  Selected is a tinted fill plus a coloured edge -- no inset glow, which is
+//  how the steel keys say "engaged" and would look like a lit bulb here.
+.SidePanel button.pwrTier.selected {
+  background-color: rgba($violet-500, 0.17);
+  border-color: rgba($violet-300, 0.62);
+  box-shadow: 0 0 0 1px rgba($violet-300, 0.14);
+}
+
+.SidePanel button.pwrTier.selected:hover {
+  background-color: rgba($violet-500, 0.23);
+  border-color: rgba($violet-200, 0.8);
+}
+
+pwrTierBody {
+  padding: 13px 13px 14px 13px;
+}
+
+pwrTierGlyph {
+  font-size: 19px;
+  color: rgba($text, 0.5);
+  transition: color 150ms ease-out;
+}
+
+.SidePanel button.pwrTier.selected pwrTierGlyph {
+  color: $violet-200;
+}
+
+//  Faded, not hidden -- see the note in PowerProfile.tsx. GTK animates
+//  `opacity` on a widget, so this crossfades as the selection moves.
+pwrTierDot {
+  font-size: 9px;
+  color: $violet-200;
+  opacity: 0;
+  transition: opacity 160ms ease-out;
+}
+
+pwrTierDot.on {
+  opacity: 1;
+}
+
+pwrTierName {
+  margin-top: 9px;
+  font-size: 11px;
+  letter-spacing: 1.1px;
+  color: rgba($text, 0.92);
+}
+
+pwrTierBlurb {
+  margin-top: 5px;
+  font-size: 9px;
+  //  Prose, so no tracking and a real line height. Every other small text in
+  //  the deck is a legend and is spaced out; this one is meant to be read.
+  letter-spacing: 0;
+  line-height: 1.45;
+  color: rgba($text, 0.42);
+}
+
+//  Under the cards: what asusd will do with the charger, or "applying…" while
+//  a write is in flight.
+pwrStatus {
+  margin: 11px 3px 0 3px;
+  font-size: 9px;
+  letter-spacing: 0.3px;
+  color: rgba($text, 0.34);
+}
+
+// ---- telemetry --------------------------------------------------------------
+
+//  A stat tile. Same card material as a tier, one step quieter, because these
+//  are read rather than pressed.
+pwrStat {
+  padding: 11px 12px 12px 12px;
+  border-radius: 10px;
+  background-color: rgba($white, 0.028);
+  border: 1px solid rgba($edge, 0.06);
+}
+
+pwrStatLabel {
+  font-size: 8px;
+  letter-spacing: 1.6px;
+  color: rgba($text, 0.36);
+}
+
+//  The figure carries the tile, so it gets the size. Tabular by virtue of the
+//  deck's monospace font -- a proportional face makes a 2-digit reading jump
+//  sideways every time it crosses 100.
+pwrStatValue {
+  margin-top: 3px;
+  font-size: 23px;
+  color: rgba($text, 0.95);
+}
+
+pwrStatUnit {
+  font-size: 9px;
+  color: rgba($text, 0.34);
+}
+
+// ---- fill bars --------------------------------------------------------------
+//  GTK4 LevelBar node tree is  levelbar > trough > block.filled.
+//  Both the trough and the block need an explicit min-height: the default theme
+//  sizes them from an icon metric, and left alone they render as a 1px hair.
+
+.SidePanel levelbar.pwrStatBar {
+  margin-top: 9px;
+}
+
+.SidePanel levelbar.pwrStatBar > trough {
+  min-height: 4px;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  background-color: rgba($white, 0.07);
+  box-shadow: none;
+}
+
+.SidePanel levelbar.pwrStatBar > trough > block {
+  min-height: 4px;
+  border: none;
+  border-radius: 2px;
+  background-color: rgba($text, 0.5);
+  box-shadow: none;
+}
+
+//  One hue per reading, so three bars side by side are distinguishable at a
+//  glance without a legend. These are the deck's existing load colours, not a
+//  new set: $danger is what every other gauge here goes red with.
+.SidePanel levelbar.pwrStatBar.hot > trough > block {
+  background-color: $danger;
+}
+
+.SidePanel levelbar.pwrStatBar.warm > trough > block {
+  background-color: $warn;
+}
+
+.SidePanel levelbar.pwrStatBar.cool > trough > block {
+  background-color: $lcd-on;
+}
+
+// ---- the fan curve row ------------------------------------------------------
+
+pwrRow {
+  //  Two of these stack, so the gap lives on the row rather than on the
+  //  parent's `spacing` -- the parent also holds the rules and the section
+  //  labels, which want different gaps.
+  margin-bottom: 8px;
+  padding: 13px 14px;
+  border-radius: 10px;
+  background-color: rgba($white, 0.028);
+  border: 1px solid rgba($edge, 0.06);
+}
+
+pwrRowTitle {
+  font-size: 11px;
+  letter-spacing: 0.3px;
+  color: rgba($text, 0.9);
+}
+
+pwrRowNote {
+  font-size: 9px;
+  letter-spacing: 0;
+  line-height: 1.45;
+  color: rgba($text, 0.4);
+}
+
+//  State as a word, beside the switch that changes it. The switch says which
+//  way it is thrown; the pill says what that MEANS, which for a fan curve is
+//  not guessable from a knob position.
+pwrPill {
+  padding: 3px 9px;
+  border-radius: 10px;
+  font-size: 8px;
+  letter-spacing: 1.4px;
+  color: rgba($text, 0.55);
+  background-color: rgba($white, 0.06);
+  border: 1px solid rgba($edge, 0.08);
+}
+
+//  A quiet outlined button, the secondary action on a web dialog. Deliberately
+//  NOT accent-filled: the thing this page is FOR is the tier you pick, and a
+//  solid violet button down here would out-shout all three cards.
+.SidePanel button.pwrAction {
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-size: 10px;
+  letter-spacing: 0.6px;
+  color: rgba($text, 0.82);
+  background-image: none;
+  background-color: rgba($white, 0.05);
+  border: 1px solid rgba($edge, 0.14);
+  box-shadow: none;
+  transition:
+    background-color 140ms ease-out,
+    border-color 140ms ease-out,
+    color 140ms ease-out;
+}
+
+.SidePanel button.pwrAction:hover {
+  color: $violet-200;
+  background-color: rgba($violet-500, 0.2);
+  border-color: rgba($violet-300, 0.55);
+}
+
+.SidePanel button.pwrAction:active {
+  background-color: rgba($violet-500, 0.32);
+}
+
+//  Insensitive, because the package is not installed. The note beside it says
+//  the command to fix that, so this only has to read as "not available" -- it
+//  does not have to explain itself.
+.SidePanel button.pwrAction:disabled {
+  color: rgba($text, 0.24);
+  background-color: transparent;
+  border-color: rgba($edge, 0.07);
+}
+
+// ---- switch -----------------------------------------------------------------
+//  A track and a knob, built from two boxes. The knob's position is a GTK
+//  alignment driven by state, not a CSS transform, so it snaps rather than
+//  slides -- see the note in PowerProfile.tsx for why it is not a GtkSwitch.
+
+.SidePanel button.pwrSwitch {
+  padding: 0;
+  min-width: 42px;
+  min-height: 24px;
+  border: none;
+  border-radius: 12px;
+  background-image: none;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+pwrSwitchTrack {
+  padding: 3px;
+  min-width: 36px;
+  min-height: 18px;
+  border-radius: 12px;
+  background-color: rgba($white, 0.1);
+  border: 1px solid rgba($edge, 0.1);
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out;
+}
+
+.SidePanel button.pwrSwitch:hover pwrSwitchTrack {
+  background-color: rgba($white, 0.16);
+}
+
+.SidePanel button.pwrSwitch.on pwrSwitchTrack {
+  background-color: rgba($violet-500, 0.85);
+  border-color: rgba($violet-300, 0.55);
+}
+
+.SidePanel button.pwrSwitch.on:hover pwrSwitchTrack {
+  background-color: $violet-400;
+}
+
+pwrSwitchKnob {
+  min-width: 16px;
+  min-height: 16px;
+  border-radius: 9px;
+  background-color: rgba($text, 0.78);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+}
+
+.SidePanel button.pwrSwitch.on pwrSwitchKnob {
+  background-color: $white;
+}
+
+// -----------------------------------------------------------------------------
+//  THE DRAWER KEY
+// -----------------------------------------------------------------------------
+//  Stays in the deck's language -- it hangs in a painted frame beside the other
+//  two and is not part of the flat page. Reuses the system plate rather than
+//  needing new art.
+
+.Sidebar button.frameKey.keyPower {
+  background-image:
+    linear-gradient(rgba($ink-050, 0.22), rgba($ink-050, 0.66)),
+    url("file:///home/ryona/.config/ags/assets/keys/system.png");
+}

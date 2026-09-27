@@ -24,6 +24,8 @@ import FsHud from "./widget/FsHud"
 import Playspace from "./widget/Playspace"
 import { toggleSidebar } from "./widget/Sidebar"
 import { togglePlayspace } from "./state/playspace"
+import { togglePanel } from "./state/panel"
+import { shift } from "./state/profile"
 
 app.start({
   css: style,
@@ -51,6 +53,14 @@ app.start({
 
       if (name === "playspace") togglePlayspace()
       else if (name === "sidebar") toggleSidebar()
+      else if (name === "power") togglePanel("power")
+      //  The two that do the thing without opening anything, for a keybind on
+      //  the Fn-key row: `profile-up` is one step toward Performance,
+      //  `profile-down` one step toward Quiet, both clamped at the ends. The
+      //  panel does not have to be open, and the OSD-less feedback is the
+      //  readout on the drawer key changing.
+      else if (name === "profile-up") shift(1)
+      else if (name === "profile-down") shift(-1)
       else return respond(`unknown request: ${name}`)
 
       respond("ok")

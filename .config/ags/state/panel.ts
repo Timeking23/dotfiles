@@ -16,7 +16,7 @@ import { createMemo, createState } from "ags"
  * casing.
  */
 
-export type PanelKey = "weather" | "wallpaper"
+export type PanelKey = "weather" | "wallpaper" | "power"
 
 const [active, setActive] = createState<PanelKey | null>(null)
 
