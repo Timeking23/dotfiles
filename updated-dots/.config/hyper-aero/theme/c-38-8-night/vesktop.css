@@ -1,0 +1,56 @@
+.theme-light,
+.theme-dark,
+.theme-light .theme-light,
+.theme-dark .theme-dark,
+.visual-refresh.theme-light,
+.visual-refresh.theme-dark {
+    --background-primary: #141415;
+    --background-secondary: #171719;
+    --background-secondary-alt: #1b1c1d;
+    --background-tertiary: #0c0c0d;
+    --background-floating: #202022;
+    --background-accent: #2a2a2c;
+    --background-modifier-hover: rgba(144, 151, 156, 0.14);
+    --background-modifier-active: rgba(144, 151, 156, 0.22);
+    --background-modifier-selected: rgba(243, 191, 102, 0.16);
+    --background-base-lowest: #0c0c0d;
+    --background-base-lower: #141415;
+    --background-base-low: #171719;
+    --background-surface-high: #202022;
+    --background-surface-higher: #262729;
+    --background-surface-highest: #2b2c2e;
+    --chat-background-default: #141415;
+    --channeltextarea-background: #202022;
+    --text-normal: #ededee;
+    --text-default: #ededee;
+    --text-strong: #ffffff;
+    --text-muted: #959698;
+    --text-link: #f3bf66;
+    --header-primary: #ededee;
+    --header-secondary: #959698;
+    --interactive-normal: #959698;
+    --interactive-hover: #ededee;
+    --interactive-active: #f3bf66;
+    --channels-default: #959698;
+    --brand-500: #90979c;
+    --brand-560: #6d7279;
+    --brand-600: #6d7279;
+    --brand-experiment: #90979c;
+    --brand-experiment-560: #6d7279;
+    --control-brand-foreground: #f3bf66;
+    --control-brand-foreground-new: #f3bf66;
+    color-scheme: dark;
+}
+
+[class*="channelTextArea_"] [class*="scrollableContainer_"] {
+    border: 1px solid rgba(243, 191, 102, 0.30) !important;
+    box-shadow: inset 0 1px 0 rgba(246, 207, 139, 0.12) !important;
+}
+
+[class*="channelTextArea_"]:focus-within [class*="scrollableContainer_"] {
+    border-color: #f3bf66 !important;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(149, 150, 152, 0.30) !important;
+}

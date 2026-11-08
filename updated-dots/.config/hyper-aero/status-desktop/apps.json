@@ -1,0 +1,116 @@
+[
+  {
+    "name": "Firefox",
+    "id": "firefox",
+    "match": [
+      "firefox",
+      "firefox-bin"
+    ],
+    "class": [
+      "firefox"
+    ]
+  },
+  {
+    "name": "Spotify",
+    "id": "spotify-launcher",
+    "match": [
+      "spotify"
+    ],
+    "class": [
+      "spotify"
+    ]
+  },
+  {
+    "name": "Ghostty",
+    "id": "com.mitchellh.ghostty",
+    "match": [
+      "ghostty"
+    ],
+    "class": [
+      "com.mitchellh.ghostty"
+    ]
+  },
+  {
+    "name": "Dolphin",
+    "id": "org.kde.dolphin",
+    "match": [
+      "dolphin"
+    ],
+    "class": [
+      "org.kde.dolphin"
+    ]
+  },
+  {
+    "name": "Steam",
+    "id": "steam",
+    "match": [
+      "steam"
+    ],
+    "class": [
+      "steam"
+    ]
+  },
+  {
+    "name": "Code",
+    "id": "code-oss",
+    "match": [
+      "code-oss"
+    ],
+    "class": [
+      "code-oss",
+      "code"
+    ]
+  },
+  {
+    "name": "Kitty",
+    "id": "kitty",
+    "match": [
+      "kitty"
+    ],
+    "class": [
+      "kitty"
+    ]
+  },
+  {
+    "name": "mpv",
+    "id": "mpv",
+    "match": [
+      "mpv"
+    ],
+    "class": [
+      "mpv"
+    ]
+  },
+  {
+    "name": "btop",
+    "id": "btop",
+    "match": [
+      "btop"
+    ],
+    "class": []
+  },
+  {
+    "name": "Volume",
+    "id": "org.pulseaudio.pavucontrol",
+    "match": [
+      "pavucontrol"
+    ],
+    "class": [
+      "org.pulseaudio.pavucontrol"
+    ]
+  },
+  {
+    "name": "Aero Studio",
+    "id": "aero-studio",
+    "match": [],
+    "class": []
+  },
+  {
+    "name": "FF Resonance",
+    "id": "FINAL FANTASY RESONANCE",
+    "match": [],
+    "class": [
+      "steam_app_3259780"
+    ]
+  }
+]

@@ -1,0 +1,5 @@
+002 || song of saya
+Å|Å|Å|Å|Å|Å|Å|Å|Å|Å|Å|Å|Å|
+çπñÎÇÃâS
+Å|Å|Å|Å|Å|Å|Å|Å|Å|Å|Å|Å|Å|
+Winamp skin featuring Saya from Nitro+'s visual novel "Saya no Uta"

@@ -1,0 +1,17 @@
+{
+  "image": "/home/ryona/Downloads/wallpaper/sayanouta.jpg",
+  "accent": "red",
+  "layers": [
+    {
+      "type": "mist",
+      "amount": 0.5,
+      "speed": 1
+    },
+    {
+      "type": "snow",
+      "amount": 0.35,
+      "speed": 1
+    }
+  ],
+  "name": "Sayanouta"
+}

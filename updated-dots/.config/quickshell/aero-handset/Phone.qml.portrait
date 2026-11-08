@@ -1,0 +1,499 @@
+import QtQuick
+import QtQuick.Effects
+import Quickshell
+import Quickshell.Io
+
+// The slider phone body, drawn in QML (no bitmaps) at art size 887x1308 and scaled by `s`,
+// so it stays sharp at any resolution. Modelled on the Fomz "Z007" camera skin.
+// Opening: rise from below with a little tilt, keypad slides out, the screen powers on
+// CRT-style, shows the FOMZ boot logo, flashes, and the browser appears.
+// Closing runs the same steps backwards. The previous bitmap version is Phone.qml.art.
+Item {
+    id: ph
+    property real s: 1
+    property string phase: "off"
+    property rect hole
+    property int sliderY: 1131
+    property real lift: 1000
+
+    property real rise: 1      // 1 = below the screen, 0 = in place
+    property real slide: 1     // 1 = keypad tucked under the body, 0 = open
+    property real beam: 0      // CRT line width 0..1
+    property real open: 0      // CRT line height 0..1
+    property real boot: 0      // FOMZ boot logo on the black screen
+    property real flash: 0     // white flash over the screen
+    // The black glass only exists until the browser shows; on the Top layer it would
+    // otherwise sit over the browser.
+    property bool powered: false
+
+    property var now: new Date()
+    property int battery: 100
+    property bool charging: false
+
+    signal poweredOn()
+    signal opened()
+    signal closed()
+    signal clicked()
+
+    // Palette
+    readonly property color shell0: "#fbfbfc"
+    readonly property color shell1: "#dcdce1"
+    readonly property color shell2: "#b9b9c1"
+    readonly property color line: "#a3a3ab"
+    readonly property color lav0: "#f1f0ff"
+    readonly property color lav1: "#cfcdee"
+    readonly property color ink: "#3a3a44"
+
+    onPhaseChanged: {
+        if (phase === "opening") { closeAnim.stop(); openAnim.restart() }
+        else if (phase === "closing") { openAnim.stop(); closeAnim.restart() }
+        else if (phase === "on") { rise = 0; slide = 0; beam = 1; open = 1; boot = 0; flash = 0; powered = true }
+        else if (phase === "off") { rise = 1; slide = 1; beam = 0; open = 0; boot = 0; flash = 0; powered = false }
+    }
+
+    SequentialAnimation {
+        id: openAnim
+        ScriptAction { script: { ph.rise = 1; ph.slide = 1; ph.beam = 0; ph.open = 0; ph.boot = 0; ph.flash = 0; ph.powered = false } }
+        NumberAnimation { target: ph; property: "rise"; to: 0; duration: 600; easing.type: Easing.OutBack; easing.overshoot: 0.9 }
+        NumberAnimation { target: ph; property: "slide"; to: 0; duration: 280; easing.type: Easing.OutBack; easing.overshoot: 1.4 }
+        PauseAnimation { duration: 80 }
+        NumberAnimation { target: ph; property: "beam"; to: 1; duration: 140; easing.type: Easing.OutQuad }
+        NumberAnimation { target: ph; property: "open"; to: 1; duration: 180; easing.type: Easing.OutCubic }
+        NumberAnimation { target: ph; property: "boot"; to: 1; duration: 160 }
+        PauseAnimation { duration: 380 }
+        NumberAnimation { target: ph; property: "flash"; to: 1; duration: 140 }
+        ScriptAction { script: { ph.boot = 0; ph.powered = true; ph.poweredOn() } }
+        NumberAnimation { target: ph; property: "flash"; to: 0; duration: 380; easing.type: Easing.InQuad }
+        ScriptAction { script: ph.opened() }
+    }
+
+    SequentialAnimation {
+        id: closeAnim
+        ScriptAction { script: ph.powered = false }
+        NumberAnimation { target: ph; property: "flash"; to: 1; duration: 90 }
+        ParallelAnimation {
+            NumberAnimation { target: ph; property: "open"; to: 0; duration: 160; easing.type: Easing.InCubic }
+            NumberAnimation { target: ph; property: "flash"; to: 0.4; duration: 160 }
+        }
+        NumberAnimation { target: ph; property: "beam"; to: 0; duration: 120 }
+        NumberAnimation { target: ph; property: "slide"; to: 1; duration: 220; easing.type: Easing.InCubic }
+        NumberAnimation { target: ph; property: "rise"; to: 1; duration: 420; easing.type: Easing.InBack; easing.overshoot: 0.8 }
+        ScriptAction { script: ph.closed() }
+    }
+
+    // Live status strip data
+    Timer {
+        interval: 15000
+        repeat: true
+        running: ph.phase !== "off"
+        triggeredOnStart: true
+        onTriggered: { ph.now = new Date(); batCap.reload(); batState.reload() }
+    }
+    FileView {
+        id: batCap
+        path: "/sys/class/power_supply/BAT1/capacity"
+        printErrors: false
+        onLoaded: ph.battery = parseInt(text()) || 0
+    }
+    FileView {
+        id: batState
+        path: "/sys/class/power_supply/BAT1/status"
+        printErrors: false
+        onLoaded: ph.charging = text().trim() !== "Discharging"
+    }
+
+    function run(cmd) { Quickshell.execDetached(["sh", "-c", cmd]) }
+
+    // ── Reusable bits ────────────────────────────────────────────────
+
+    // Raised plastic key: soft gradient, hairline edge, pressed state.
+    component Key: Rectangle {
+        id: key
+        property string label: ""
+        property string glyph: ""
+        property color face0: "#f7f7f9"
+        property color face1: "#d4d4da"
+        property color textColor: "#9a9aa3"
+        property int fontSize: 26
+        signal pressed()
+        radius: 10
+        border.width: 2
+        border.color: "#a9a9b2"
+        gradient: Gradient {
+            GradientStop { position: 0; color: keyArea.pressed ? key.face1 : key.face0 }
+            GradientStop { position: 1; color: keyArea.pressed ? key.face0 : key.face1 }
+        }
+        Rectangle {
+            anchors.fill: parent; anchors.margins: 3
+            radius: parent.radius - 2
+            color: "transparent"
+            border.width: 2
+            border.color: "#80ffffff"
+        }
+        Text {
+            anchors.centerIn: parent
+            text: key.glyph.length ? key.glyph : key.label
+            font.family: key.glyph.length ? "JetBrainsMono Nerd Font" : "DejaVu Sans"
+            font.pixelSize: key.fontSize
+            color: key.textColor
+        }
+        MouseArea {
+            id: keyArea
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            onClicked: key.pressed()
+        }
+    }
+
+    // ── The phone ────────────────────────────────────────────────────
+
+    Item {
+        id: art
+        width: 887
+        height: 1308
+        scale: ph.s
+        transformOrigin: Item.TopLeft
+        y: ph.rise * (ph.lift / ph.s + 40)
+        rotation: ph.rise * 7
+        opacity: ph.rise > 0.97 ? 0 : 1
+
+        // ── Keypad half: tucked under the body, slides down to open
+        Item {
+            id: keypad
+            y: ph.sliderY - ph.slide * 168
+            width: 887; height: 177
+
+            // Left block: ALBUM, record toggle, MENU
+            Rectangle {
+                x: 22; y: 0
+                width: 612; height: 170
+                radius: 26
+                border.width: 3; border.color: ph.line
+                gradient: Gradient {
+                    GradientStop { position: 0; color: ph.shell0 }
+                    GradientStop { position: 1; color: ph.shell1 }
+                }
+                // Hinge seam
+                Rectangle { x: 190; y: 10; width: 3; height: parent.height - 20; color: "#c4c4cc" }
+
+                Key {
+                    x: 32; y: 40
+                    width: 132; height: 112
+                    label: "ALBUM"; fontSize: 24
+                    onPressed: ph.run("xdg-open \"$(xdg-user-dir PICTURES)\"")
+                }
+                Row {
+                    x: 228; y: 64
+                    Key {
+                        width: 70; height: 62; radius: 8
+                        glyph: "\u{F0100}"; fontSize: 26; textColor: "#e05468"
+                        onPressed: ph.run("$HOME/.config/hyper-aero/scripts/screenshot.sh window")
+                    }
+                    Key {
+                        width: 70; height: 62; radius: 8
+                        glyph: "\u{F0567}"; fontSize: 26
+                        onPressed: ph.run("$HOME/.config/hyper-aero/scripts/screenrec.sh")
+                    }
+                }
+                Key {
+                    x: 412; y: 22
+                    width: 172; height: 138
+                    label: "MENU"; fontSize: 30; textColor: "#ffffff"
+                    face0: "#8db4ec"; face1: "#4f86d6"
+                    border.color: "#3d6bb0"
+                    onPressed: ph.run("$HOME/.config/hyper-aero/scripts/codex.sh toggle")
+                }
+            }
+
+            // Right block: the camera dial
+            Rectangle {
+                x: 648; y: -18
+                width: 222; height: 188
+                radius: 36
+                border.width: 3; border.color: ph.line
+                gradient: Gradient {
+                    GradientStop { position: 0; color: ph.shell0 }
+                    GradientStop { position: 1; color: ph.shell1 }
+                }
+                Rectangle {
+                    id: ring
+                    anchors.centerIn: parent
+                    width: 170; height: 170; radius: 85
+                    gradient: Gradient {
+                        GradientStop { position: 0; color: "#ffffff" }
+                        GradientStop { position: 1; color: "#b4b4bc" }
+                    }
+                    border.width: 2; border.color: "#9a9aa3"
+                    rotation: dialArea.pressed ? 20 : 0
+                    Behavior on rotation { NumberAnimation { duration: 160 } }
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: 124; height: 124; radius: 62
+                        gradient: Gradient {
+                            GradientStop { position: 0; color: dialArea.pressed ? "#c6c6ce" : "#f4f4f6" }
+                            GradientStop { position: 1; color: dialArea.pressed ? "#f4f4f6" : "#c6c6ce" }
+                        }
+                        border.width: 2; border.color: "#a0a0a8"
+                        Text {
+                            anchors.centerIn: parent
+                            text: "\u{F0100}"
+                            font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 34
+                            color: "#3a3a44"
+                        }
+                    }
+                    MouseArea {
+                        id: dialArea
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: ph.run("$HOME/.config/hyper-aero/scripts/screenshot.sh full")
+                    }
+                }
+            }
+        }
+
+        // ── Main body. The whole group is masked so the screen area is a real hole and
+        // the browser window underneath shows through.
+        Item {
+            id: holeMask
+            width: 887; height: 1308
+            visible: false
+            layer.enabled: true
+            Rectangle { x: ph.hole.x; y: ph.hole.y; width: ph.hole.width; height: ph.hole.height; color: "#000000" }
+        }
+        Item {
+            width: 887; height: 1308
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                maskEnabled: true
+                maskInverted: true
+                maskSource: holeMask
+                maskThresholdMin: 0.5
+                maskSpreadAtMin: 0.0
+            }
+
+        Rectangle {
+            x: 10; y: 26
+            width: 867; height: 1140
+            radius: 46
+            color: "#000000"
+            opacity: 0.55
+            layer.enabled: true
+            layer.effect: MultiEffect { blurEnabled: true; blur: 1.0; blurMax: 48 }
+        }
+        Rectangle {
+            id: body
+            x: 0; y: 0
+            width: 887; height: 1150
+            radius: 46
+            border.width: 3; border.color: ph.line
+            gradient: Gradient {
+                GradientStop { position: 0; color: ph.shell0 }
+                GradientStop { position: 0.55; color: "#ececf0" }
+                GradientStop { position: 1; color: ph.shell1 }
+            }
+            // Inner bevel highlight
+            Rectangle {
+                anchors.fill: parent; anchors.margins: 6
+                radius: 41
+                color: "transparent"
+                border.width: 3
+                border.color: "#c0ffffff"
+            }
+            // Side strip on the right edge, like the hinge rail in the original
+            Rectangle {
+                x: parent.width - 30; y: 60
+                width: 18; height: parent.height - 120
+                radius: 9
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0; color: "#e6e6ea" }
+                    GradientStop { position: 1; color: "#c8c8cf" }
+                }
+            }
+
+            // Top control bar
+            Rectangle {
+                x: 52; y: 14
+                width: 783; height: 96
+                radius: 18
+                border.width: 2; border.color: "#b8b8c0"
+                gradient: Gradient {
+                    GradientStop { position: 0; color: "#f2f2f5" }
+                    GradientStop { position: 1; color: "#dedee3" }
+                }
+                Key { x: 20; y: 12; width: 86; height: 70; glyph: "\u{F0493}"; fontSize: 28; textColor: "#8c8c95" }
+                Key { x: 142; y: 12; width: 76; height: 70; glyph: "\u{F13AB}"; fontSize: 28; textColor: "#8c8c95" }
+                // Speaker grille
+                Rectangle {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.horizontalCenterOffset: 0
+                    y: 40; width: 76; height: 14; radius: 7
+                    gradient: Gradient {
+                        GradientStop { position: 0; color: "#8f8f98" }
+                        GradientStop { position: 1; color: "#c6c6ce" }
+                    }
+                }
+                // Front camera
+                Rectangle {
+                    x: parent.width - 190; y: 34
+                    width: 26; height: 26; radius: 6
+                    color: "#2a2a30"
+                    Rectangle { x: 6; y: 6; width: 7; height: 7; radius: 3.5; color: "#6a6a78" }
+                }
+                Key { x: parent.width - 106; y: 12; width: 86; height: 70; glyph: "\u{F0241}"; fontSize: 28; textColor: "#8c8c95" }
+            }
+
+            // Screen bezel
+            Rectangle {
+                x: ph.hole.x - 12; y: 140
+                width: ph.hole.width + 24; height: 870
+                radius: 14
+                color: "#55555e"
+                border.width: 4; border.color: "#3a3a42"
+
+                // Status strip
+                Rectangle {
+                    x: 8; y: 8
+                    width: parent.width - 16; height: 64
+                    gradient: Gradient {
+                        GradientStop { position: 0; color: ph.lav0 }
+                        GradientStop { position: 1; color: ph.lav1 }
+                    }
+                    Row {
+                        x: 18; anchors.verticalCenter: parent.verticalCenter
+                        spacing: 12
+                        // Signal bars
+                        Row {
+                            anchors.bottom: parent.bottom; anchors.bottomMargin: 6
+                            spacing: 3
+                            Repeater {
+                                model: 5
+                                delegate: Rectangle {
+                                    required property int index
+                                    anchors.bottom: parent.bottom
+                                    width: 5; height: 8 + index * 5
+                                    color: "#6d6d7a"
+                                }
+                            }
+                        }
+                        Text { text: "♥"; font.pixelSize: 34; color: "#f070b8"; style: Text.Outline; styleColor: "#c0408a" }
+                        Rectangle {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 36; height: 26; radius: 2
+                            color: "#f6d860"; border.width: 2; border.color: "#c9a830"
+                            Rectangle { x: 2; y: 6; width: 32; height: 2; rotation: 26; color: "#c9a830" }
+                            Rectangle { x: 2; y: 6; width: 32; height: 2; rotation: -26; color: "#c9a830" }
+                        }
+                    }
+                    Text {
+                        anchors.centerIn: parent
+                        text: Qt.formatTime(ph.now, "HH:mm")
+                        font.family: "DejaVu Serif"; font.pixelSize: 34; font.letterSpacing: 2
+                        color: ph.ink
+                    }
+                    // Battery
+                    Item {
+                        anchors.right: parent.right; anchors.rightMargin: 22
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 46; height: 24
+                        Rectangle {
+                            width: 42; height: 24; radius: 4
+                            color: "#f8f8fb"; border.width: 2; border.color: "#6d6d7a"
+                            Rectangle {
+                                x: 3; y: 3
+                                width: (parent.width - 6) * Math.max(0.08, ph.battery / 100); height: parent.height - 6
+                                radius: 2
+                                color: ph.battery <= 20 && !ph.charging ? "#ff6a6a" : "#4fd05a"
+                            }
+                        }
+                        Rectangle { x: 42; y: 7; width: 4; height: 10; color: "#6d6d7a" }
+                    }
+                }
+
+                // Soft-key strip
+                Rectangle {
+                    x: 8; y: parent.height - 72
+                    width: parent.width - 16; height: 64
+                    gradient: Gradient {
+                        GradientStop { position: 0; color: ph.lav0 }
+                        GradientStop { position: 1; color: ph.lav1 }
+                    }
+                    Text {
+                        x: 24; anchors.verticalCenter: parent.verticalCenter
+                        text: "IMPORT"
+                        font.family: "DejaVu Serif"; font.pixelSize: 32
+                        color: ph.ink
+                    }
+                    Text {
+                        anchors.right: parent.right; anchors.rightMargin: 24
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "FILP"
+                        font.family: "DejaVu Serif"; font.pixelSize: 32
+                        color: ph.ink
+                    }
+                }
+            }
+
+            // Brand
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+                y: 1036
+                text: "FOMZ"
+                font.family: "DejaVu Sans"; font.weight: Font.Bold; font.pixelSize: 54; font.letterSpacing: 6
+                color: "#8a8a94"
+                style: Text.Raised; styleColor: "#ffffff"
+            }
+        }
+
+        }
+
+        // Screen glass: black until the browser appears on top of it.
+        Rectangle {
+            x: ph.hole.x - 2; y: ph.hole.y - 2
+            width: ph.hole.width + 4; height: ph.hole.height + 4
+            color: ph.powered ? "transparent" : "#000000"
+
+            // FOMZ boot logo
+            Column {
+                anchors.centerIn: parent
+                spacing: 18
+                opacity: ph.boot
+                visible: !ph.powered && ph.boot > 0
+                Text {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: "FOMZ"
+                    font.family: "DejaVu Sans"; font.weight: Font.Bold; font.pixelSize: 96; font.letterSpacing: 10
+                    color: "#e8e8f4"
+                }
+                Row {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: 10
+                    Repeater {
+                        model: 8
+                        delegate: Rectangle {
+                            required property int index
+                            width: 22; height: 10
+                            color: index < Math.round(ph.boot * 8) ? "#b9b4ff" : "#2a2a36"
+                        }
+                    }
+                }
+            }
+
+            // CRT power line / panel, then the white flash.
+            Rectangle {
+                anchors.centerIn: parent
+                width: parent.width * ph.beam
+                height: Math.max(3, parent.height * ph.open)
+                visible: ph.beam > 0 && (ph.flash > 0 || ph.open < 1)
+                color: "#e8ecff"
+                opacity: ph.powered ? ph.flash : Math.max(ph.flash, 1 - ph.open) * (0.25 + 0.75 * (1 - ph.boot))
+            }
+        }
+
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: ph.clicked()
+    }
+}

@@ -1,0 +1,43 @@
+:root {
+    --accent-color: #a51119;
+    --accent-bg-color: #a51119;
+    --accent-fg-color: #ffffff;
+    --window-bg-color: #faf7f8;
+    --window-fg-color: #100c0c;
+    --view-bg-color: #ffffff;
+    --view-fg-color: #100c0c;
+    --headerbar-bg-color: #f6eaed;
+    --headerbar-fg-color: #100c0c;
+    --headerbar-backdrop-color: #f8f2f3;
+    --sidebar-bg-color: #f6eef0;
+    --sidebar-fg-color: #100c0c;
+    --card-bg-color: #ffffff;
+    --card-fg-color: #100c0c;
+    --popover-bg-color: #ffffff;
+    --popover-fg-color: #100c0c;
+    --dialog-bg-color: #faf7f8;
+    --dialog-fg-color: #100c0c;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --accent-color: #ffb1d0;
+        --accent-bg-color: #dd1f41;
+        --accent-fg-color: #ffffff;
+        --window-bg-color: #201011;
+        --window-fg-color: #f7eaec;
+        --view-bg-color: #2f0e10;
+        --view-fg-color: #f7eaec;
+        --headerbar-bg-color: #3e1317;
+        --headerbar-fg-color: #f7eaec;
+        --headerbar-backdrop-color: #331013;
+        --sidebar-bg-color: #241214;
+        --sidebar-fg-color: #f7eaec;
+        --card-bg-color: #3c1317;
+        --card-fg-color: #f7eaec;
+        --popover-bg-color: #3c1317;
+        --popover-fg-color: #f7eaec;
+        --dialog-bg-color: #320f12;
+        --dialog-fg-color: #f7eaec;
+    }
+}

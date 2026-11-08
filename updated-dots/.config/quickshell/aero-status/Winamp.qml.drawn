@@ -1,0 +1,401 @@
+import QtQuick
+import QtQuick.Effects
+import Quickshell.Services.Mpris
+
+Rectangle {
+    id: w
+    property var core
+    readonly property var pl: core.player
+    readonly property bool playing: !!(pl && pl.isPlaying)
+    readonly property real len: pl && pl.lengthSupported ? pl.length : 0
+    readonly property real vol: core.sink && core.sink.audio ? core.sink.audio.volume : 0
+    readonly property string trackName: pl && pl.trackTitle ? (pl.trackArtist ? pl.trackArtist + " - " : "") + pl.trackTitle : "WINAMP 2.91  ***  IT REALLY WHIPS THE LLAMA'S ASS"
+    readonly property color led: "#00e800"
+    readonly property var bands: {
+        var src = core.bars || []
+        var out = []
+        for (var i = 0; i < 20; i++) {
+            var k = src.length ? Math.floor(i * src.length / 20) : -1
+            out.push(k >= 0 ? src[k] : 0)
+        }
+        return out
+    }
+    property real pos: 0
+    property var peaks: []
+    onBandsChanged: {
+        var out = []
+        for (var i = 0; i < 20; i++) {
+            var prev = peaks.length ? peaks[i] : 0
+            out.push(Math.max(bands[i], prev - 0.012))
+        }
+        peaks = out
+    }
+    height: 382
+    color: "#292940"
+    border.width: 2
+    border.color: "#0a0a14"
+
+    function clock(s) {
+        s = Math.max(0, Math.floor(s))
+        return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0")
+    }
+
+    function act(key) {
+        if (!pl) {
+            core.launch("spotify-launcher")
+            return
+        }
+        if (key === "prev" && pl.canGoPrevious) pl.previous()
+        else if (key === "play" && pl.canPlay) pl.play()
+        else if (key === "pause" && pl.canPause) pl.pause()
+        else if (key === "stop" && pl.canControl) pl.stop()
+        else if (key === "next" && pl.canGoNext) pl.next()
+    }
+
+    function setVolume(v) {
+        if (!core.sink || !core.sink.audio) return
+        core.sink.audio.muted = false
+        core.sink.audio.volume = Math.max(0, Math.min(1, v))
+    }
+
+    Timer {
+        interval: 500
+        repeat: true
+        running: w.playing && !w.core.covered
+        triggeredOnStart: true
+        onTriggered: {
+            if (w.pl) {
+                w.pl.positionChanged()
+                w.pos = w.pl.position
+            }
+        }
+    }
+
+    Rectangle {
+        id: bar
+        x: 2; y: 2
+        width: parent.width - 4; height: 18
+        gradient: Gradient {
+            orientation: Gradient.Horizontal
+            GradientStop { position: 0; color: "#34345a" }
+            GradientStop { position: 0.5; color: "#5a5a96" }
+            GradientStop { position: 1; color: "#34345a" }
+        }
+        Column {
+            anchors.verticalCenter: parent.verticalCenter
+            width: parent.width - 20
+            x: 10
+            spacing: 2
+            Repeater {
+                model: 3
+                delegate: Rectangle { width: parent.width; height: 2; color: "#c8a038" }
+            }
+        }
+        Rectangle {
+            anchors.centerIn: parent
+            width: title.implicitWidth + 16
+            height: parent.height
+            color: "#44446c"
+            Text {
+                id: title
+                anchors.centerIn: parent
+                text: "WINAMP"
+                font.family: "Michroma"
+                font.pixelSize: 11
+                color: "#ffe9a8"
+            }
+        }
+    }
+
+    Rectangle {
+        id: screen
+        x: 8; y: 26
+        width: 128; height: 84
+        color: "#000008"
+        border.width: 1
+        border.color: "#50507a"
+        Text {
+            x: 8; y: 6
+            text: w.playing ? "▶" : (w.pl && w.pl.playbackState === MprisPlaybackState.Paused ? "‖" : "■")
+            font.pixelSize: 11
+            color: w.led
+        }
+        Text {
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            y: 0
+            text: w.clock(w.pos)
+            font.family: "JetBrainsMono Nerd Font"
+            font.weight: Font.Bold
+            font.pixelSize: 30
+            color: "#30ff40"
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                shadowEnabled: true
+                shadowColor: "#00e800"
+                shadowBlur: 0.65
+                blurMax: 14
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 0
+                shadowOpacity: 0.85
+                autoPaddingEnabled: true
+            }
+        }
+        Row {
+            x: 6
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 5
+            spacing: 1
+            Repeater {
+                model: w.bands
+                delegate: Item {
+                    required property var modelData
+                    required property int index
+                    width: 5; height: 36
+                    Rectangle {
+                        y: parent.height * (1 - (w.peaks[parent.index] || 0)) - 1
+                        visible: (w.peaks[parent.index] || 0) > 0.02
+                        width: parent.width; height: 1
+                        color: "#e8e8ff"
+                    }
+                    Rectangle {
+                        anchors.bottom: parent.bottom
+                        width: parent.width
+                        height: Math.max(1, parent.height * parent.modelData)
+                        gradient: Gradient {
+                            GradientStop { position: 0; color: "#ff3a1a" }
+                            GradientStop { position: 0.45; color: "#e8e020" }
+                            GradientStop { position: 1; color: "#10c010" }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        id: marquee
+        x: 142; y: 26
+        width: parent.width - 150; height: 26
+        color: "#000008"
+        border.width: 1
+        border.color: "#50507a"
+        clip: true
+        Text {
+            id: scroller
+            y: 4
+            x: 6
+            text: w.trackName
+            font.family: "JetBrainsMono Nerd Font"
+            font.pixelSize: 13
+            color: w.led
+            onTextChanged: { x = 6; scroll.restart() }
+            SequentialAnimation on x {
+                id: scroll
+                running: scroller.implicitWidth > marquee.width - 12 && !w.core.covered
+                loops: Animation.Infinite
+                PauseAnimation { duration: 2000 }
+                NumberAnimation { to: marquee.width - scroller.implicitWidth - 12; duration: Math.max(1000, (scroller.implicitWidth - marquee.width) * 40) }
+                PauseAnimation { duration: 2000 }
+                NumberAnimation { to: 6; duration: 600 }
+            }
+        }
+    }
+
+    Row {
+        x: 142; y: 56
+        spacing: 6
+        Text {
+            text: (w.pl ? w.pl.identity : "NO PLAYER").toUpperCase()
+            font.family: "JetBrainsMono Nerd Font"
+            font.weight: Font.Bold
+            font.pixelSize: 11
+            color: w.led
+        }
+        Text {
+            text: w.clock(w.len)
+            font.family: "JetBrainsMono Nerd Font"
+            font.pixelSize: 11
+            color: "#7ac87a"
+        }
+    }
+
+    Item {
+        id: volBox
+        x: 142; y: 76
+        width: parent.width - 150; height: 32
+        Text {
+            text: "VOLUME  " + Math.round(w.vol * 100) + "%"
+            font.family: "JetBrainsMono Nerd Font"
+            font.pixelSize: 10
+            color: "#c8c8e8"
+        }
+        Rectangle {
+            y: 15
+            width: parent.width; height: 13
+            color: "#000008"
+            border.width: 1
+            border.color: "#50507a"
+            Rectangle {
+                x: 2; y: 2
+                height: parent.height - 4
+                width: (parent.width - 4) * Math.min(1, w.vol)
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0; color: "#10b010" }
+                    GradientStop { position: 0.7; color: "#e8e020" }
+                    GradientStop { position: 1; color: "#ff3a1a" }
+                }
+            }
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onPressed: function(m) { w.setVolume(m.x / width) }
+                onPositionChanged: function(m) { if (pressed) w.setVolume(m.x / width) }
+                onWheel: function(e) { w.setVolume(w.vol + (e.angleDelta.y > 0 ? 0.05 : -0.05)) }
+            }
+        }
+    }
+
+    Rectangle {
+        id: seek
+        x: 8; y: 118
+        width: parent.width - 16; height: 12
+        color: "#14142a"
+        border.width: 1
+        border.color: "#50507a"
+        Rectangle {
+            x: Math.max(0, (parent.width - width) * (w.len > 0 ? Math.min(1, w.pos / w.len) : 0))
+            y: 1
+            width: 30; height: parent.height - 2
+            gradient: Gradient {
+                GradientStop { position: 0; color: "#e8c868" }
+                GradientStop { position: 1; color: "#8a6a18" }
+            }
+        }
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            onClicked: function(m) {
+                if (w.pl && w.pl.canSeek && w.len > 0) w.pl.position = w.len * m.x / width
+            }
+        }
+    }
+
+    Row {
+        x: 8; y: 138
+        spacing: 3
+        Repeater {
+            model: [["\u{F04AE}", "prev"], ["\u{F040A}", "play"], ["\u{F03E4}", "pause"], ["\u{F04DB}", "stop"], ["\u{F04AD}", "next"]]
+            delegate: Rectangle {
+                required property var modelData
+                width: 40; height: 34
+                radius: 2
+                border.width: 1
+                border.color: "#0a0a14"
+                gradient: Gradient {
+                    GradientStop { position: 0; color: btn.pressed ? "#3a3a5a" : "#8c8cb0" }
+                    GradientStop { position: 1; color: btn.pressed ? "#5a5a80" : "#3a3a5a" }
+                }
+                Text {
+                    anchors.centerIn: parent
+                    text: parent.modelData[0]
+                    font.family: "JetBrainsMono Nerd Font"
+                    font.pixelSize: 20
+                    color: "#f0f0ff"
+                }
+                MouseArea {
+                    id: btn
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: w.act(parent.modelData[1])
+                }
+            }
+        }
+        Rectangle {
+            width: 40; height: 34
+            radius: 2
+            border.width: 1
+            border.color: "#0a0a14"
+            gradient: Gradient {
+                GradientStop { position: 0; color: "#8c8cb0" }
+                GradientStop { position: 1; color: "#3a3a5a" }
+            }
+            Text {
+                anchors.centerIn: parent
+                text: "\u{F05DD}"
+                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: 20
+                color: "#f0f0ff"
+            }
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: w.core.launch("spotify-launcher")
+            }
+        }
+    }
+
+    Rectangle {
+        x: 2; y: 182
+        width: parent.width - 4; height: 16
+        gradient: Gradient {
+            orientation: Gradient.Horizontal
+            GradientStop { position: 0; color: "#34345a" }
+            GradientStop { position: 0.5; color: "#5a5a96" }
+            GradientStop { position: 1; color: "#34345a" }
+        }
+        Text {
+            anchors.centerIn: parent
+            text: "WINAMP EQUALIZER"
+            font.family: "Michroma"
+            font.pixelSize: 9
+            color: "#ffe9a8"
+        }
+    }
+
+    Rectangle {
+        x: 8; y: 204
+        width: parent.width - 16; height: 172
+        color: "#14142a"
+        border.width: 1
+        border.color: "#50507a"
+        Row {
+            anchors.centerIn: parent
+            spacing: 5
+            Repeater {
+                model: 10
+                delegate: Item {
+                    id: band
+                    required property int index
+                    readonly property real level: Math.max(w.bands[index * 2] || 0, w.bands[index * 2 + 1] || 0)
+                    width: 22; height: 152
+                    Rectangle {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: 6; height: parent.height - 14
+                        color: "#05050e"
+                        border.width: 1
+                        border.color: "#50507a"
+                    }
+                    Rectangle {
+                        y: (parent.height - 26) * (1 - band.level)
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: 20; height: 12
+                        radius: 1
+                        color: band.level > 0.75 ? "#ff5a2a" : (band.level > 0.4 ? "#e8e020" : "#40d040")
+                        border.width: 1
+                        border.color: "#05050e"
+                    }
+                    Text {
+                        anchors.bottom: parent.bottom
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: ["60", "170", "310", "600", "1K", "3K", "6K", "12K", "14K", "16K"][band.index]
+                        font.family: "JetBrainsMono Nerd Font"
+                        font.pixelSize: 8
+                        color: "#c8c8e8"
+                    }
+                }
+            }
+        }
+    }
+}

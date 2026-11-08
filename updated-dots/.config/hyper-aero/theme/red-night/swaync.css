@@ -1,0 +1,408 @@
+@import url("file:///etc/xdg/swaync/style.css");
+
+:root {
+    --cc-bg: rgba(250, 247, 248, 0.96);
+    --text-color: #100c0c;
+    --text-color-disabled: #b19da1;
+    --bg-selected: #a51119;
+    --noti-border-color: rgba(16, 12, 12, 0.75);
+    --noti-bg-darker: #f6eaed;
+    --noti-bg-hover: rgba(246, 234, 237, 0.95);
+    --noti-bg-focus: rgba(238, 105, 142, 0.18);
+    --noti-close-bg: rgba(16, 12, 12, 0.08);
+    --noti-close-bg-hover: #c4283b;
+    --border-radius: 16px;
+    --font-size-summary: 13px;
+    --font-size-body: 12px;
+}
+
+* {
+    font-family: "Exo 2", "JetBrainsMono Nerd Font", sans-serif;
+}
+
+.control-center {
+    background: linear-gradient(to bottom,
+        rgba(255, 255, 255, 0.98) 0%,
+        rgba(250, 247, 248, 0.96) 28%,
+        rgba(246, 238, 240, 0.95) 100%);
+    border: 1px solid rgba(16, 12, 12, 0.80);
+    border-radius: 22px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    color: #100c0c;
+}
+
+.control-center-list-placeholder {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 11px;
+    color: #725c5f;
+}
+
+.notification-row .notification-background .notification {
+    background: linear-gradient(to bottom,
+        rgba(255, 255, 255, 0.96) 0%,
+        rgba(255, 255, 255, 0.88) 47%,
+        rgba(246, 234, 237, 0.86) 53%,
+        rgba(250, 247, 248, 0.92) 100%);
+    border: 1px solid rgba(16, 12, 12, 0.75);
+    border-radius: 16px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    color: #100c0c;
+}
+
+.notification-row .notification-background .notification.critical {
+    border: 1px solid #c4283b;
+    box-shadow: inset 4px 0 0 #c4283b, inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.notification-row .notification-background .notification.low {
+    border: 1px solid rgba(114, 92, 95, 0.45);
+}
+
+.floating-notifications .notification-row .notification-background .notification {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 8px 22px rgba(16, 12, 12, 0.18);
+}
+
+.notification-default-action:hover {
+    background: rgba(238, 105, 142, 0.10);
+    border-radius: 16px;
+}
+
+.notification .summary {
+    font-family: "Exo 2";
+    font-weight: 700;
+    font-size: 13px;
+    color: #100c0c;
+}
+
+.notification .time {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 10px;
+    color: #725c5f;
+}
+
+.notification .body {
+    font-size: 12px;
+    color: #3c2b2e;
+}
+
+.close-button {
+    background: rgba(16, 12, 12, 0.08);
+    color: #100c0c;
+    border: 1px solid rgba(16, 12, 12, 0.35);
+    border-radius: 999px;
+}
+
+.close-button:hover {
+    background: #c4283b;
+    color: #ffffff;
+    border: 1px solid #100c0c;
+}
+
+.notification-action > button {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 11px;
+    color: #100c0c;
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(16, 12, 12, 0.45);
+    border-radius: 12px;
+}
+
+.notification-action > button:hover {
+    color: #ffffff;
+    background: linear-gradient(to bottom, #f8aac0 0%, #ee698e 45%, #a51119 55%, #dd1f41 100%);
+    border: 1px solid #100c0c;
+}
+
+.widget-title {
+    margin: 8px 10px 6px 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(114, 92, 95, 0.35);
+}
+
+.widget-title > label {
+    font-family: "Michroma";
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #100c0c;
+}
+
+.widget-title > button {
+    font-family: "JetBrainsMono Nerd Font";
+    font-weight: 700;
+    font-size: 10px;
+    color: #100c0c;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid #100c0c;
+    border-radius: 12px;
+    padding: 4px 14px;
+}
+
+.widget-title > button:hover {
+    color: #ffffff;
+    background: #c4283b;
+}
+
+.widget-dnd {
+    margin: 6px 10px;
+}
+
+.widget-dnd label {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 11px;
+    color: #725c5f;
+}
+
+.widget-dnd switch {
+    background: #decace;
+    border: 1px solid #100c0c;
+    border-radius: 999px;
+}
+
+.widget-dnd switch:checked {
+    background: linear-gradient(to bottom, #f8aac0 0%, #ee698e 45%, #a51119 55%, #dd1f41 100%);
+}
+
+.widget-dnd switch slider {
+    background: #ffffff;
+    border: 1px solid #100c0c;
+    border-radius: 999px;
+}
+
+.widget-mpris .widget-mpris-player {
+    border: 1px solid #100c0c;
+    border-radius: 16px;
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay {
+    background-color: rgba(16, 12, 12, 0.58);
+}
+
+.widget-mpris .widget-mpris-title {
+    font-family: "Exo 2";
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+}
+
+.widget-mpris .widget-mpris-subtitle {
+    color: #f6eaed;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+}
+
+.widget-mpris .widget-mpris-player button,
+.widget-mpris .widget-mpris-player button image,
+.widget-mpris .widget-mpris-player button label {
+    color: #ffffff;
+    -gtk-icon-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+}
+
+.widget-mpris .widget-mpris-player button {
+    background: transparent;
+    border-radius: 999px;
+}
+
+.widget-mpris .widget-mpris-player button:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.widget-mpris .widget-mpris-player button:active {
+    background: rgba(238, 105, 142, 0.45);
+}
+
+.widget-mpris .widget-mpris-player button:disabled,
+.widget-mpris .widget-mpris-player button:disabled image {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.widget-volume,
+.widget-backlight {
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(16, 12, 12, 0.35);
+    border-radius: 14px;
+    padding: 6px 12px;
+    margin: 4px 10px;
+}
+
+.widget-volume label,
+.widget-backlight label {
+    font-family: "JetBrainsMono Nerd Font";
+    font-weight: 700;
+    font-size: 10px;
+    color: #725c5f;
+}
+
+.widget-volume scale trough,
+.widget-backlight scale trough {
+    background: #decace;
+    border-radius: 999px;
+    min-height: 6px;
+}
+
+.widget-volume scale highlight,
+.widget-backlight scale highlight {
+    background: linear-gradient(to right, #a51119, #ee698e);
+    border-radius: 999px;
+}
+
+.widget-volume scale slider,
+.widget-backlight scale slider {
+    background: #ffffff;
+    border: 1px solid #100c0c;
+    border-radius: 999px;
+    min-width: 14px;
+    min-height: 14px;
+}
+
+:root {
+    --cc-bg: rgba(29, 14, 15, 0.96);
+    --text-color: #f7eaec;
+    --text-color-disabled: #7c4c52;
+    --bg-selected: #ee698e;
+    --noti-border-color: rgba(255, 177, 208, 0.35);
+    --noti-bg-darker: #201011;
+    --noti-bg-hover: rgba(94, 31, 38, 0.95);
+    --noti-bg-focus: rgba(238, 105, 142, 0.22);
+    --noti-close-bg: rgba(247, 234, 236, 0.08);
+    --noti-close-bg-hover: #ff5d6c;
+}
+
+.control-center {
+    background: linear-gradient(to bottom,
+        rgba(76, 26, 30, 0.98) 0%,
+        rgba(33, 17, 18, 0.97) 28%,
+        rgba(23, 11, 12, 0.96) 100%);
+    border: 1px solid rgba(255, 177, 208, 0.35);
+    box-shadow: inset 0 1px 0 rgba(255, 196, 217, 0.22);
+    color: #f7eaec;
+}
+
+.control-center-list-placeholder {
+    color: #ae8f93;
+}
+
+.notification-row .notification-background .notification {
+    background: linear-gradient(to bottom,
+        rgba(105, 39, 45, 0.97) 0%,
+        rgba(66, 22, 26, 0.96) 47%,
+        rgba(33, 17, 18, 0.96) 53%,
+        rgba(51, 16, 19, 0.97) 100%);
+    border: 1px solid rgba(255, 177, 208, 0.35);
+    box-shadow: inset 0 1px 0 rgba(255, 196, 217, 0.22);
+    color: #f7eaec;
+}
+
+.notification-row .notification-background .notification.critical {
+    border: 1px solid #ff5d6c;
+    box-shadow: inset 4px 0 0 #ff5d6c, inset 0 1px 0 rgba(255, 196, 217, 0.22);
+}
+
+.notification-row .notification-background .notification.low {
+    border: 1px solid rgba(174, 143, 147, 0.35);
+}
+
+.floating-notifications .notification-row .notification-background .notification {
+    box-shadow: inset 0 1px 0 rgba(255, 196, 217, 0.22), 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 14px rgba(238, 105, 142, 0.18);
+}
+
+.notification-default-action:hover {
+    background: rgba(238, 105, 142, 0.16);
+}
+
+.notification .summary {
+    color: #f7eaec;
+}
+
+.notification .time {
+    color: #ae8f93;
+}
+
+.notification .body {
+    color: #e2c7ca;
+}
+
+.close-button {
+    background: rgba(247, 234, 236, 0.08);
+    color: #f7eaec;
+    border: 1px solid rgba(247, 234, 236, 0.30);
+}
+
+.close-button:hover {
+    background: #ff5d6c;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.notification-action > button {
+    color: #f7eaec;
+    background: rgba(247, 234, 236, 0.08);
+    border: 1px solid rgba(255, 177, 208, 0.35);
+}
+
+.notification-action > button:hover {
+    color: #ffffff;
+    border: 1px solid rgba(255, 177, 208, 0.75);
+}
+
+.widget-title {
+    border-bottom: 1px solid rgba(174, 143, 147, 0.25);
+}
+
+.widget-title > label {
+    color: #f7eaec;
+}
+
+.widget-title > button {
+    color: #f7eaec;
+    background: rgba(247, 234, 236, 0.08);
+    border: 1px solid rgba(255, 177, 208, 0.45);
+}
+
+.widget-title > button:hover {
+    color: #ffffff;
+    background: #ff5d6c;
+}
+
+.widget-dnd label {
+    color: #ae8f93;
+}
+
+.widget-dnd switch {
+    background: #451f22;
+    border: 1px solid rgba(255, 177, 208, 0.45);
+}
+
+.widget-dnd switch slider {
+    background: #f7eaec;
+    border: 1px solid rgba(16, 12, 12, 0.6);
+}
+
+.widget-mpris .widget-mpris-player {
+    border: 1px solid rgba(255, 177, 208, 0.35);
+}
+
+.widget-volume,
+.widget-backlight {
+    background: rgba(247, 234, 236, 0.05);
+    border: 1px solid rgba(255, 177, 208, 0.25);
+}
+
+.widget-volume label,
+.widget-backlight label {
+    color: #ae8f93;
+}
+
+.widget-volume scale trough,
+.widget-backlight scale trough {
+    background: #451f22;
+}
+
+.widget-volume scale highlight,
+.widget-backlight scale highlight {
+    background: linear-gradient(to right, #dd1f41, #ffb1d0);
+}
+
+.widget-volume scale slider,
+.widget-backlight scale slider {
+    background: #f7eaec;
+    border: 1px solid rgba(255, 177, 208, 0.75);
+}

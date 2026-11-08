@@ -1,0 +1,110 @@
+import QtQuick
+
+// The slider phone body. Drawn at art size (887x1308) and scaled by `s`.
+// Opening: rise from below, the keypad slides out, the screen powers on CRT-style.
+// Closing runs the same steps backwards.
+Item {
+    id: ph
+    property real s: 1
+    property string phase: "off"
+    property rect hole
+    property int sliderY: 1131
+    property real lift: 1000
+
+    property real rise: 1      // 1 = below the screen, 0 = in place
+    property real slide: 1     // 1 = keypad tucked under the body, 0 = open
+    property real beam: 0      // CRT line width 0..1
+    property real open: 0      // CRT line height 0..1
+    property real flash: 0     // white flash over the screen
+    // The black glass only exists until the browser shows; on the Top layer it would
+    // otherwise sit over the browser.
+    property bool powered: false
+
+    signal poweredOn()
+    signal opened()
+    signal closed()
+    signal clicked()
+
+    onPhaseChanged: {
+        if (phase === "opening") { closeAnim.stop(); openAnim.restart() }
+        else if (phase === "closing") { openAnim.stop(); closeAnim.restart() }
+        else if (phase === "on") { rise = 0; slide = 0; beam = 1; open = 1; flash = 0; powered = true }
+        else if (phase === "off") { rise = 1; slide = 1; beam = 0; open = 0; flash = 0; powered = false }
+    }
+
+    SequentialAnimation {
+        id: openAnim
+        ScriptAction { script: { ph.rise = 1; ph.slide = 1; ph.beam = 0; ph.open = 0; ph.flash = 0; ph.powered = false } }
+        NumberAnimation { target: ph; property: "rise"; to: 0; duration: 560; easing.type: Easing.OutBack; easing.overshoot: 0.8 }
+        NumberAnimation { target: ph; property: "slide"; to: 0; duration: 260; easing.type: Easing.OutCubic }
+        PauseAnimation { duration: 90 }
+        NumberAnimation { target: ph; property: "beam"; to: 1; duration: 140; easing.type: Easing.OutQuad }
+        ParallelAnimation {
+            NumberAnimation { target: ph; property: "open"; to: 1; duration: 200; easing.type: Easing.OutCubic }
+            NumberAnimation { target: ph; property: "flash"; to: 1; duration: 200 }
+        }
+        ScriptAction { script: { ph.powered = true; ph.poweredOn() } }
+        NumberAnimation { target: ph; property: "flash"; to: 0; duration: 380; easing.type: Easing.InQuad }
+        ScriptAction { script: ph.opened() }
+    }
+
+    SequentialAnimation {
+        id: closeAnim
+        ScriptAction { script: ph.powered = false }
+        NumberAnimation { target: ph; property: "flash"; to: 1; duration: 90 }
+        ParallelAnimation {
+            NumberAnimation { target: ph; property: "open"; to: 0; duration: 160; easing.type: Easing.InCubic }
+            NumberAnimation { target: ph; property: "flash"; to: 0.4; duration: 160 }
+        }
+        NumberAnimation { target: ph; property: "beam"; to: 0; duration: 120 }
+        NumberAnimation { target: ph; property: "slide"; to: 1; duration: 220; easing.type: Easing.InCubic }
+        NumberAnimation { target: ph; property: "rise"; to: 1; duration: 420; easing.type: Easing.InBack; easing.overshoot: 0.8 }
+        ScriptAction { script: ph.closed() }
+    }
+
+    Item {
+        id: art
+        width: 887
+        height: 1308
+        scale: ph.s
+        transformOrigin: Item.TopLeft
+        y: ph.rise * (ph.lift / ph.s + 40)
+        opacity: ph.rise > 0.97 ? 0 : 1
+
+        // Screen glass: black until the browser appears on top of it.
+        Rectangle {
+            x: ph.hole.x - 2; y: ph.hole.y - 2
+            width: ph.hole.width + 4; height: ph.hole.height + 4
+            color: ph.powered ? "transparent" : "#000000"
+
+            // CRT power line / panel, then the white flash.
+            Rectangle {
+                anchors.centerIn: parent
+                width: parent.width * ph.beam
+                height: Math.max(3, parent.height * ph.open)
+                visible: ph.beam > 0 && (!ph.powered || ph.flash > 0)
+                color: "#e8ecff"
+                opacity: ph.powered ? ph.flash : 0.25 + 0.75 * Math.max(ph.flash, 1 - ph.open)
+            }
+        }
+
+        // Keypad half: tucked up under the body, slides down to open.
+        Image {
+            y: ph.sliderY - ph.slide * 168
+            source: "assets/slider-wide.png"
+            smooth: true
+            mipmap: true
+        }
+
+        Image {
+            source: "assets/top-wide.png"
+            smooth: true
+            mipmap: true
+        }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: ph.clicked()
+    }
+}

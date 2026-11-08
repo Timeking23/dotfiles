@@ -1,0 +1,22 @@
+# Ghostty Neon Purple Bloom config
+#theme = Monokai Pro
+#theme = Srcery
+theme = bloom-night
+
+font-family = JetBrainsMono Nerd Font
+font-size = 12
+
+background-opacity = 0.95
+
+# Bloom shader
+custom-shader = shaders/heart.glsl
+custom-shader = shaders/chromatic.glsl
+custom-shader = shaders/bloom.glsl
+custom-shader = shaders/vignette.glsl
+
+custom-shader-animation = true
+
+gtk-titlebar = false
+window-decoration = false
+
+desktop-notifications = false

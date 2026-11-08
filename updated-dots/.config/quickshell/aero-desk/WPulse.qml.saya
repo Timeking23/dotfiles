@@ -1,0 +1,266 @@
+import QtQuick
+
+// Classic Winamp 2.x skin renderer. Drop an extracted .wsz (PNG-converted, lowercase
+// names) into skins/<name>/ and point `skin` at it.
+Item {
+    id: w
+    property var core
+    property var pal
+    property string skin: Qt.resolvedUrl("skins/saya/")
+    readonly property var p: core ? core.player : null
+    readonly property bool playing: !!(p && p.isPlaying)
+    readonly property real len: p && p.length > 0 ? p.length : 0
+    property real pos: 0
+    readonly property real baseW: 275
+    // Main window (116) stacked over the equalizer window (116), as in Winamp.
+    readonly property real baseH: 232
+    readonly property real k: Math.min(width / baseW, height / baseH)
+
+    // From the skin's viscolor.txt / pledit.txt.
+    readonly property color visTop: "#3fcbd1"
+    readonly property color visMid: "#38c6cc"
+    readonly property color visLow: "#5fe0b7"
+    readonly property color visPeak: "#dbfae5"
+    readonly property color textColor: "#ffffff"
+    readonly property color accent: "#8ef6c8"
+
+    component Sprite: Image {
+        property string file
+        property int sx: 0
+        property int sy: 0
+        property int sw: 0
+        property int sh: 0
+        source: w.skin + file + ".png"
+        sourceClipRect: Qt.rect(sx, sy, sw, sh)
+        width: sw
+        height: sh
+        smooth: true
+    }
+
+    component SkinButton: Sprite {
+        id: btn
+        property int pressedY: sh
+        signal clicked()
+        sy: ma.pressed ? pressedY : 0
+        MouseArea { id: ma; anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: btn.clicked() }
+    }
+
+    Timer {
+        interval: 1000
+        repeat: true
+        running: !!w.p
+        triggeredOnStart: true
+        onTriggered: {
+            if (w.p) {
+                w.p.positionChanged()
+                w.pos = w.p.position
+            }
+        }
+    }
+
+    Item {
+        width: w.baseW
+        height: w.baseH
+        anchors.centerIn: parent
+        scale: w.k
+
+        Image {
+            width: 275; height: 116
+            source: w.skin + "main.png"
+        }
+        Image {
+            y: 116
+            width: 275; height: 116
+            source: w.skin + "eqmain.png"
+        }
+
+        // Play / pause / stop indicator
+        Sprite {
+            x: 26; y: 28
+            file: "playpaus"
+            sx: w.playing ? 0 : (w.p ? 9 : 18)
+            sw: 9; sh: 9
+        }
+
+        // Time: mm:ss using numbers.bmp (9x13 per digit)
+        Item {
+            id: time
+            readonly property int secs: Math.max(0, Math.floor(w.pos))
+            readonly property var digits: [Math.floor(secs / 600) % 10, Math.floor(secs / 60) % 10, Math.floor((secs % 60) / 10), secs % 10]
+            property bool on: true
+            visible: !w.p || w.playing || on
+            Timer { interval: 600; repeat: true; running: !!w.p && !w.playing; onTriggered: time.on = !time.on }
+            // This skin's main.bmp has no colon painted between the digit pairs.
+            Rectangle { x: 72; y: 29; width: 2; height: 2; color: "#d8e4e8" }
+            Rectangle { x: 72; y: 35; width: 2; height: 2; color: "#d8e4e8" }
+            Repeater {
+                model: [48, 60, 78, 90]
+                delegate: Sprite {
+                    required property int index
+                    required property int modelData
+                    x: modelData; y: 26
+                    file: "numbers"
+                    sx: 9 * time.digits[index]
+                    sw: 9; sh: 13
+                }
+            }
+        }
+
+        // Spectrum analyzer: 76x16 at 24,43, 19 bars of 3px + 1px gap
+        Row {
+            x: 24; y: 43
+            height: 16
+            spacing: 1
+            Repeater {
+                model: 19
+                delegate: Item {
+                    required property int index
+                    readonly property real v: w.core && w.core.bars.length ? (w.core.bars[Math.floor(index * w.core.bars.length / 19)] || 0) : (w.playing ? 0.25 + 0.25 * Math.abs(Math.sin(w.pos * 1.7 + index)) : 0)
+                    width: 3
+                    height: 16
+                    Item {
+                        anchors.bottom: parent.bottom
+                        width: parent.width
+                        height: Math.round(16 * Math.min(1, parent.v))
+                        clip: true
+                        Behavior on height { NumberAnimation { duration: 90 } }
+                        Rectangle {
+                            anchors.bottom: parent.bottom
+                            width: parent.width
+                            height: 16
+                            gradient: Gradient {
+                                GradientStop { position: 0.0; color: w.visTop }
+                                GradientStop { position: 0.5; color: w.visMid }
+                                GradientStop { position: 1.0; color: w.visLow }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Song title. This skin's text.bmp only carries A-Z, so a real font keeps
+        // digits and non-Latin titles readable.
+        Item {
+            x: 111; y: 25
+            width: 154; height: 10
+            clip: true
+            Text {
+                id: marq
+                readonly property string full: w.p ? ((w.p.trackArtist ? w.p.trackArtist + " - " : "") + (w.p.trackTitle || String(w.p.identity || ""))) : "SONG OF SAYA"
+                property real shift: 0
+                anchors.verticalCenter: parent.verticalCenter
+                x: implicitWidth > parent.width ? -shift : 0
+                text: full
+                font.family: "JetBrainsMono Nerd Font Mono"
+                font.pixelSize: 8
+                color: w.textColor
+                NumberAnimation on shift {
+                    running: marq.implicitWidth > marq.parent.width
+                    from: 0
+                    to: marq.implicitWidth - marq.parent.width + 6
+                    duration: Math.max(3000, (marq.implicitWidth - marq.parent.width) * 60)
+                    loops: Animation.Infinite
+                    easing.type: Easing.InOutSine
+                }
+            }
+        }
+
+        // Stereo indicator
+        Sprite {
+            x: 239; y: 41
+            visible: !!w.p
+            file: "monoster"
+            sw: 29; sh: 12
+        }
+
+        // Volume
+        Item {
+            id: vol
+            x: 107; y: 57
+            width: 68; height: 13
+            readonly property real v: w.core ? (w.core.muted ? 0 : w.core.volume) : 0
+            Sprite { file: "volume"; sw: 68; sh: 13 }
+            Rectangle {
+                x: 1 + (parent.width - 5) * vol.v
+                anchors.verticalCenter: parent.verticalCenter
+                width: 3; height: 9
+                radius: 1
+                color: w.accent
+            }
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                function set(mx) { if (w.core) w.core.nudgeVolume(Math.max(0, Math.min(1, mx / vol.width)) - vol.v) }
+                onPressed: function(m) { set(m.x) }
+                onPositionChanged: function(m) { if (pressed) set(m.x) }
+                onWheel: function(e) { if (w.core) w.core.nudgeVolume(e.angleDelta.y > 0 ? 0.05 : -0.05) }
+            }
+        }
+
+        // Balance (visual only)
+        Sprite { x: 177; y: 57; file: "balance"; sx: 9; sw: 38; sh: 13 }
+
+        // EQ / PL toggles (visual only)
+        Sprite { x: 219; y: 58; file: "shufrep"; sx: 0; sy: 61; sw: 23; sh: 12 }
+        Sprite { x: 242; y: 58; file: "shufrep"; sx: 23; sy: 61; sw: 23; sh: 12 }
+
+        // Seek bar
+        Item {
+            id: seek
+            x: 16; y: 72
+            width: 248; height: 6
+            readonly property real v: w.len > 0 ? Math.min(1, w.pos / w.len) : 0
+            Sprite { file: "posbar"; sw: 248; sh: 6 }
+            Sprite {
+                visible: w.len > 0
+                x: (parent.width - width) * seek.v
+                file: "posbar"
+                sx: 248; sw: 29; sh: 6
+            }
+            MouseArea {
+                anchors.fill: parent
+                anchors.margins: -3
+                cursorShape: Qt.PointingHandCursor
+                function jump(mx) {
+                    if (!w.p || !w.p.canSeek || w.len <= 0) return
+                    var t = Math.max(0, Math.min(1, mx / seek.width)) * w.len
+                    w.p.position = t
+                    w.pos = t
+                }
+                onPressed: function(m) { jump(m.x) }
+                onPositionChanged: function(m) { if (pressed) jump(m.x) }
+            }
+        }
+
+        // Transport (cbuttons.bmp: row 0 normal, row 18 pressed)
+        SkinButton { x: 16;  y: 88; file: "cbuttons"; sx: 0;  sw: 23; sh: 18; onClicked: w.core.media("prev") }
+        SkinButton { x: 39;  y: 88; file: "cbuttons"; sx: 23; sw: 23; sh: 18; onClicked: if (w.p && !w.playing) w.core.media("toggle") }
+        SkinButton { x: 62;  y: 88; file: "cbuttons"; sx: 46; sw: 23; sh: 18; onClicked: if (w.playing) w.core.media("toggle") }
+        SkinButton { x: 85;  y: 88; file: "cbuttons"; sx: 69; sw: 23; sh: 18; onClicked: if (w.p && w.p.canControl) w.p.stop() }
+        SkinButton { x: 108; y: 88; file: "cbuttons"; sx: 92; sw: 22; sh: 18; onClicked: w.core.media("next") }
+        SkinButton { x: 136; y: 89; file: "cbuttons"; sx: 114; sw: 22; sh: 16; pressedY: 16; onClicked: if (w.p && w.p.canRaise) w.p.raise() }
+
+        // Shuffle / repeat (shufrep.bmp: off, off-pressed, on, on-pressed rows of 15)
+        Sprite {
+            x: 164; y: 89
+            file: "shufrep"
+            sx: 28
+            sy: (w.p && w.p.shuffle ? 30 : 0) + (shufMa.pressed ? 15 : 0)
+            sw: 47; sh: 15
+            MouseArea {
+                id: shufMa
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: if (w.p && w.p.shuffleSupported) w.p.shuffle = !w.p.shuffle
+            }
+        }
+        Sprite {
+            x: 210; y: 89
+            file: "shufrep"
+            sy: repMa.pressed ? 15 : 0
+            sw: 28; sh: 15
+            MouseArea { id: repMa; anchors.fill: parent }
+        }
+    }
+}

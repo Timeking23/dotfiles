@@ -1,0 +1,19 @@
+{
+  "monitors": {
+    "BBY INSIGNIA-TV 0x01010101": {
+      "mode": "extend",
+      "side": "right",
+      "offset": 0.5,
+      "scale": 1,
+      "hud": "primary"
+    }
+  },
+  "laptop": {
+    "name": "eDP-2",
+    "mode": "2880x1800@120",
+    "scale": 1.8,
+    "w": 2880,
+    "h": 1800,
+    "scale_user": 1.8
+  }
+}

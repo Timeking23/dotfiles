@@ -1,0 +1,1329 @@
+$ink: #100c0c;
+$graphite: #725c5f;
+$chrome: #decace;
+$cobalt: #a51119;
+$blue: #dd1f41;
+$sky: #ee698e;
+$cloud: #f6eaed;
+$ok: #0f7b5a;
+$warn: #a8650a;
+$critical: #c4283b;
+
+* {
+    all: unset;
+}
+
+.hud {
+    margin-right: 14px;
+    padding: 12px 12px 12px 12px;
+    background-image: linear-gradient(to bottom,
+        rgba(255, 255, 255, 0.92) 0%,
+        rgba(250, 247, 248, 0.78) 14%,
+        rgba(246, 234, 237, 0.70) 100%);
+    border: 1px solid rgba(16, 12, 12, 0.8);
+    border-radius: 22px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 11px;
+    color: $ink;
+}
+
+.hud-head {
+    padding: 0 4px 6px 4px;
+}
+
+.hud-brand {
+    font-family: "Michroma";
+    font-size: 12px;
+    color: $ink;
+}
+
+.hud-collapse {
+    font-size: 11px;
+    color: $graphite;
+    padding: 2px 8px;
+    border: 1px solid rgba(16, 12, 12, 0.3);
+    border-radius: 10px;
+}
+
+.hud-collapse:hover {
+    color: #ffffff;
+    background-color: $cobalt;
+    border-color: $ink;
+}
+
+.hud-sub {
+    font-size: 9px;
+    font-weight: bold;
+    color: $graphite;
+}
+
+.card {
+    padding: 8px 11px 9px 11px;
+    background-color: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(16, 12, 12, 0.28);
+    border-radius: 16px;
+}
+
+.card-head {
+    padding-bottom: 5px;
+    border-bottom: 1px dashed rgba(114, 92, 95, 0.45);
+}
+
+.card-title {
+    font-family: "Michroma";
+    font-size: 8px;
+    color: $ink;
+}
+
+.card-code {
+    font-size: 9px;
+    color: $graphite;
+}
+
+.ring {
+    color: $cobalt;
+    background-color: rgba(222, 202, 206, 0.7);
+}
+
+.ring-num {
+    font-family: "Michroma";
+    font-size: 14px;
+    color: $ink;
+}
+
+.ring-unit {
+    font-size: 10px;
+    font-weight: bold;
+    color: $graphite;
+    margin-left: 2px;
+    margin-bottom: 2px;
+}
+
+.stat-key {
+    font-size: 9px;
+    font-weight: bold;
+    color: $graphite;
+}
+
+.stat-val {
+    font-size: 12px;
+    font-weight: bold;
+    color: $ink;
+}
+
+.stat.alert .stat-val,
+.meter.alert .meter-pct {
+    color: $critical;
+}
+
+.spark {
+    color: $cobalt;
+    background-color: rgba(238, 105, 142, 0.10);
+    border-radius: 8px;
+    margin-top: 2px;
+}
+
+.spark.net {
+    color: $sky;
+}
+
+.meter-pct {
+    font-size: 12px;
+    font-weight: bold;
+    color: $ink;
+}
+
+.meter-detail {
+    font-size: 9px;
+    color: $graphite;
+}
+
+.bar trough {
+    min-height: 6px;
+    min-width: 20px;
+    background-color: rgba(222, 202, 206, 0.75);
+    border-radius: 999px;
+}
+
+.bar progress {
+    min-height: 6px;
+    background-image: linear-gradient(to right, $cobalt, $sky);
+    border-radius: 999px;
+}
+
+.meter.alert .bar progress {
+    background-image: linear-gradient(to right, $critical, #e5484d);
+}
+
+.dgpu {
+    margin-top: 2px;
+    padding: 5px 10px;
+    border-radius: 12px;
+    border: 1px solid;
+}
+
+.dgpu.sleep {
+    color: $ok;
+    background-color: rgba(15, 123, 90, 0.08);
+    border-color: rgba(15, 123, 90, 0.45);
+}
+
+.dgpu.awake {
+    color: $warn;
+    background-color: rgba(168, 101, 10, 0.10);
+    border-color: rgba(168, 101, 10, 0.5);
+}
+
+.dgpu:hover {
+    background-color: rgba(238, 105, 142, 0.15);
+}
+
+.dgpu-name {
+    font-family: "Exo 2";
+    font-size: 12px;
+    font-weight: bold;
+    color: $ink;
+}
+
+.dgpu-state {
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.art {
+    min-width: 46px;
+    min-height: 46px;
+    border-radius: 12px;
+    border: 1px solid $ink;
+    background-color: $cloud;
+    background-size: cover;
+    background-position: center;
+}
+
+.track {
+    font-family: "Exo 2";
+    font-size: 13px;
+    font-weight: bold;
+    color: $ink;
+}
+
+.artist {
+    font-family: "Exo 2";
+    font-size: 11px;
+    color: $graphite;
+}
+
+.media-pos {
+    font-size: 9px;
+    color: $graphite;
+}
+
+.viz {
+    font-size: 14px;
+    color: $cobalt;
+    margin: 4px 0 2px 0;
+}
+
+.ctl {
+    font-size: 15px;
+    color: $ink;
+    padding: 3px 14px;
+    border: 1px solid rgba(16, 12, 12, 0.4);
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.75);
+}
+
+.ctl:hover {
+    color: $cobalt;
+    background-color: $cloud;
+}
+
+.ctl.play {
+    color: #ffffff;
+    border-color: $ink;
+    background-image: linear-gradient(to bottom, #f8aac0 0%, $sky 45%, $cobalt 55%, $blue 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.ctl.play:hover {
+    background-image: linear-gradient(to bottom, #fabfd0 0%, #f283a3 45%, #bb1b26 55%, #e83f5e 100%);
+}
+
+.hud.slim {
+    padding: 14px 6px;
+    border-radius: 18px;
+}
+
+.slim-brand {
+    font-family: "Michroma";
+    font-size: 14px;
+    color: $cobalt;
+}
+
+.slim-key {
+    font-size: 8px;
+    font-weight: bold;
+    color: $graphite;
+}
+
+.slim-val {
+    font-size: 11px;
+    font-weight: bold;
+    color: $ink;
+}
+
+.slim-bar trough {
+    min-width: 28px;
+    min-height: 4px;
+}
+
+.slim-bar progress {
+    min-height: 4px;
+}
+
+.slim-dgpu.sleep {
+    color: $ok;
+}
+
+.slim-dgpu.awake {
+    color: $warn;
+}
+
+.slim-live {
+    font-size: 13px;
+    color: $chrome;
+}
+
+.slim-live.on {
+    color: $cobalt;
+}
+
+.slim-expand {
+    font-size: 10px;
+    color: $graphite;
+}
+.desk-card {
+    padding: 12px 16px 14px 16px;
+    background-image: linear-gradient(to bottom,
+        rgba(255, 255, 255, 0.88) 0%,
+        rgba(250, 247, 248, 0.74) 46%,
+        rgba(246, 234, 237, 0.64) 54%,
+        rgba(246, 238, 240, 0.72) 100%);
+    border: 1px solid rgba(16, 12, 12, 0.72);
+    border-radius: 20px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 11px;
+    color: $ink;
+}
+
+.desk-head {
+    padding-bottom: 6px;
+    margin-bottom: 4px;
+    border-bottom: 1px dashed rgba(114, 92, 95, 0.45);
+}
+
+.desk-title {
+    font-family: "Michroma";
+    font-size: 9px;
+    color: $ink;
+}
+
+.desk-tag {
+    font-size: 9px;
+    font-weight: bold;
+    color: $graphite;
+}
+
+.chrono-time {
+    font-family: "Michroma";
+    font-size: 52px;
+    color: $ink;
+}
+
+.chrono-sec {
+    font-family: "Michroma";
+    font-size: 15px;
+    color: $cobalt;
+    margin-left: 8px;
+    margin-bottom: 12px;
+}
+
+.chrono-date {
+    font-family: "Exo 2";
+    font-size: 14px;
+    font-weight: bold;
+    color: $graphite;
+}
+
+.chrono-foot {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px dashed rgba(114, 92, 95, 0.45);
+}
+
+.atmos-icon {
+    font-size: 40px;
+    min-width: 52px;
+    color: $cobalt;
+}
+
+.atmos-temp {
+    font-family: "Michroma";
+    font-size: 30px;
+    color: $ink;
+}
+
+.atmos-unit {
+    font-size: 12px;
+    font-weight: bold;
+    color: $graphite;
+    margin: 4px 0 0 4px;
+}
+
+.atmos-desc {
+    font-family: "Exo 2";
+    font-size: 12px;
+    font-weight: bold;
+    color: $graphite;
+}
+
+.atmos-stats {
+    margin-top: 4px;
+    padding-top: 6px;
+    border-top: 1px dashed rgba(114, 92, 95, 0.45);
+}
+
+.log-edit {
+    font-size: 9px;
+    font-weight: bold;
+    color: $ink;
+    padding: 2px 10px;
+    border: 1px solid rgba(16, 12, 12, 0.45);
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+.log-edit:hover {
+    color: #ffffff;
+    background-color: $cobalt;
+    border-color: $ink;
+}
+
+.task {
+    padding: 5px 8px;
+    border-radius: 10px;
+}
+
+.task:hover {
+    background-color: rgba(238, 105, 142, 0.14);
+}
+
+.task-box {
+    font-size: 12px;
+    color: $cobalt;
+}
+
+.task-text {
+    font-family: "Exo 2";
+    font-size: 12px;
+    color: $ink;
+}
+
+.task.done .task-box {
+    color: $ok;
+}
+
+.task.done .task-text {
+    color: #b19da1;
+}
+
+.log-empty {
+    font-family: "Exo 2";
+    font-size: 11px;
+    color: $graphite;
+    padding: 6px 8px;
+}
+
+.px-wrap {
+    padding: 26px 26px 32px 26px;
+}
+
+.px-shell {
+    padding: 14px 16px;
+    border: 3px solid rgba(255, 255, 255, 0.95);
+    border-radius: unquote("64px 64px 78px 78px / 48px 48px 62px 62px");
+    background-image:
+        linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.62) 0%,
+            rgba(255, 255, 255, 0.18) 36%,
+            rgba(255, 255, 255, 0.0) 38%,
+            rgba(255, 255, 255, 0.0) 100%),
+        linear-gradient(to bottom,
+            #f69eb5 0%,
+            #ee698e 22%,
+            #dd1f41 55%,
+            #a51119 82%,
+            #8c0b13 100%);
+    box-shadow:
+        0 0 0 2px rgba(222, 202, 206, 0.95),
+        inset 0 2px 0 rgba(255, 255, 255, 0.85),
+        inset 0 -8px 14px rgba(16, 12, 12, 0.22),
+        0 8px 18px rgba(16, 12, 12, 0.13);
+}
+
+.lcd {
+    padding: 10px 16px 10px 16px;
+    border: 2px solid rgba(242, 224, 228, 0.95);
+    border-radius: unquote("34px / 26px");
+    background-image:
+        repeating-linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.05) 0px,
+            rgba(255, 255, 255, 0.05) 1px,
+            rgba(0, 0, 0, 0.0) 1px,
+            rgba(0, 0, 0, 0.0) 3px),
+        linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.20) 0%,
+            rgba(255, 255, 255, 0.0) 32%),
+        linear-gradient(to bottom,
+            #74090f 0%,
+            #a51119 45%,
+            #67080e 100%);
+    box-shadow:
+        inset 0 3px 8px rgba(0, 0, 0, 0.45),
+        0 1px 0 rgba(255, 255, 255, 0.6);
+    font-family: "DotGothic16", "JetBrainsMono Nerd Font", monospace;
+    color: #f7e1e7;
+}
+
+.lcd label {
+    text-shadow: 0 0 5px rgba(255, 166, 194, 0.85);
+}
+
+.lcd-small {
+    font-size: 10px;
+}
+
+.lcd-small.dim {
+    color: rgba(247, 225, 231, 0.55);
+}
+
+.lcd-time {
+    font-size: 24px;
+}
+
+.lcd-viz {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 9px;
+    color: #ffbed1;
+}
+
+.lcd-marquee {
+    font-size: 14px;
+    margin-top: 2px;
+}
+
+.pbtn {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 14px;
+    color: $cobalt;
+    min-width: 34px;
+    min-height: 34px;
+    border-radius: 999px;
+    border: 2px solid rgba(118, 9, 15, 0.55);
+    background-image: linear-gradient(to bottom,
+        #ffffff 0%,
+        #faf2f4 46%,
+        #f0dbdf 54%,
+        #fcf6f7 100%);
+    box-shadow: inset 0 1px 0 #ffffff, 0 2px 4px rgba(16, 12, 12, 0.25);
+}
+
+.pbtn:hover {
+    color: $blue;
+    background-image: linear-gradient(to bottom,
+        #ffffff 0%,
+        #fdf8f9 46%,
+        #f5e6e9 54%,
+        #ffffff 100%);
+}
+
+.pbtn:active {
+    box-shadow: inset 0 2px 5px rgba(16, 12, 12, 0.35);
+}
+
+.pbtn.play {
+    font-size: 18px;
+    min-width: 44px;
+    min-height: 44px;
+}
+
+.pbtn.play.live {
+    border: 3px solid #2fbf5a;
+    box-shadow: inset 0 1px 0 #ffffff, 0 0 8px rgba(76, 220, 120, 0.85);
+}
+
+.pbtn.small {
+    font-size: 16px;
+    font-weight: bold;
+    min-width: 30px;
+    min-height: 30px;
+}
+
+.px-seek trough {
+    min-height: 6px;
+    min-width: 40px;
+    border-radius: 999px;
+    background-color: rgba(16, 12, 12, 0.30);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.px-seek highlight {
+    min-height: 6px;
+    border-radius: 999px;
+    background-image: linear-gradient(to right, #f7e1e7, #ffffff);
+}
+
+.px-seek slider {
+    min-width: 16px;
+    min-height: 16px;
+    margin: -6px 0;
+    border-radius: 999px;
+    border: 2px solid rgba(118, 9, 15, 0.6);
+    background-image: linear-gradient(to bottom, #ffffff 0%, #f6eaed 50%, #f0dbdf 52%, #ffffff 100%);
+}
+
+.px-led {
+    font-size: 11px;
+    color: rgba(16, 12, 12, 0.35);
+    margin-top: 2px;
+}
+
+.px-led.on {
+    color: #4cff7a;
+    text-shadow: 0 0 6px #4cff7a;
+}
+
+.px-led.paused {
+    color: #ffc04d;
+    text-shadow: 0 0 6px #ffc04d;
+}
+
+.px-brand {
+    font-family: "Michroma";
+    font-size: 6px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.sky-canvas {
+    min-width: 338px;
+    min-height: 120px;
+    background-size: 338px 120px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.sky-foot {
+    margin-top: 2px;
+}
+
+.sky-time {
+    font-size: 11px;
+    font-weight: bold;
+    color: $ink;
+}
+
+.sky-next {
+    font-size: 9px;
+    font-weight: bold;
+    color: $cobalt;
+}
+
+.sky-moon {
+    margin-top: 2px;
+    font-size: 9px;
+    font-weight: bold;
+    color: $graphite;
+}
+.osd-wrap {
+    padding: 26px 26px 30px 26px;
+}
+
+.osd-pill {
+    padding: 12px 22px 12px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(16, 12, 12, 0.75);
+    background-image: linear-gradient(to bottom,
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(255, 255, 255, 0.80) 46%,
+        rgba(246, 234, 237, 0.74) 54%,
+        rgba(250, 247, 248, 0.86) 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 6px 16px rgba(16, 12, 12, 0.13);
+    font-family: "JetBrainsMono Nerd Font";
+    color: $ink;
+}
+
+.osd-icon {
+    font-size: 26px;
+    min-width: 34px;
+    color: $cobalt;
+}
+
+.osd-label {
+    font-family: "Michroma";
+    font-size: 9px;
+    color: $ink;
+}
+
+.osd-device {
+    font-size: 9px;
+    font-weight: bold;
+    color: $graphite;
+}
+
+.seg {
+    min-width: 10px;
+    min-height: 12px;
+    border-radius: 3px;
+    background-color: rgba(114, 92, 95, 0.18);
+    border: 1px solid rgba(16, 12, 12, 0.08);
+}
+
+.seg.on {
+    background-image: linear-gradient(to bottom, #f8aac0 0%, $sky 45%, $cobalt 55%, $blue 100%);
+    border: 1px solid rgba(16, 12, 12, 0.55);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.osd-value {
+    font-family: "Michroma";
+    font-size: 18px;
+    min-width: 54px;
+    color: $ink;
+}
+
+.osd-pill.muted .osd-icon,
+.osd-pill.muted .osd-value {
+    color: $critical;
+}
+
+.osd-pill.muted .osd-value {
+    font-size: 12px;
+}
+.ov-scrim {
+    background-image: linear-gradient(to bottom,
+        rgba(250, 247, 248, 0.52) 0%,
+        rgba(246, 234, 237, 0.46) 60%,
+        rgba(235, 205, 211, 0.50) 100%);
+}
+
+.ov-header {
+    padding: 0 6px 10px 6px;
+    border-bottom: 1px dashed rgba(114, 92, 95, 0.45);
+}
+
+.ov-heading {
+    font-family: "Michroma";
+    font-size: 15px;
+    color: $ink;
+}
+
+.ov-meta {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 10px;
+    font-weight: bold;
+    color: $graphite;
+}
+
+.ov-hint {
+    padding-top: 4px;
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 9px;
+    font-weight: bold;
+    color: $graphite;
+}
+
+.ov-card {
+    padding: 10px 10px 11px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(16, 12, 12, 0.72);
+    background-image: linear-gradient(to bottom,
+        rgba(255, 255, 255, 0.94) 0%,
+        rgba(250, 247, 248, 0.82) 46%,
+        rgba(246, 234, 237, 0.74) 54%,
+        rgba(248, 242, 243, 0.84) 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 6px 18px rgba(16, 12, 12, 0.10);
+    transition: all 160ms ease-out;
+}
+
+.ov-hit:hover > .ov-card {
+    border-color: $blue;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 0 0 3px rgba(238, 105, 142, 0.30), 0 10px 24px rgba(165, 17, 25, 0.18);
+}
+
+.ov-card.current {
+    border-color: $cobalt;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 0 0 3px rgba(221, 31, 65, 0.45), 0 10px 24px rgba(165, 17, 25, 0.20);
+}
+
+.ov-head {
+    padding: 0 2px;
+}
+
+.ov-num {
+    padding: 2px 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(16, 12, 12, 0.62);
+    background-image: linear-gradient(to bottom, #ffffff 0%, #faf7f8 48%, #f6eaed 52%, #f9f3f4 100%);
+    font-family: "Michroma";
+    font-size: 11px;
+    color: $ink;
+}
+
+.ov-card.current .ov-num {
+    border-color: $cobalt;
+    background-image: linear-gradient(to bottom, #f8aac0 0%, #ee698e 45%, #a51119 55%, #dd1f41 100%);
+    color: #ffffff;
+}
+
+.ov-state {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 9px;
+    font-weight: bold;
+    color: $graphite;
+}
+
+.ov-card.current .ov-state {
+    color: $cobalt;
+}
+
+.ov-bezel {
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid rgba(16, 12, 12, 0.80);
+    background-color: $ink;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.ov-card.vacant .ov-shot {
+    opacity: 0.55;
+}
+
+.ov-vacant-tag {
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    background-color: rgba(16, 12, 12, 0.45);
+    font-family: "Michroma";
+    font-size: 9px;
+    color: #ffffff;
+}
+
+.ov-foot {
+    padding: 0 2px;
+    min-height: 24px;
+}
+
+.ov-title {
+    margin-left: 4px;
+    font-family: "Exo 2";
+    font-size: 11px;
+    color: $ink;
+}
+
+.saver-wrap {
+    padding: 20px 24px;
+}
+
+.saver-time {
+    font-family: "Michroma";
+    font-size: 78px;
+    color: rgba(255, 255, 255, 0.92);
+    text-shadow: 0 0 22px rgba(255, 177, 208, 0.55), 0 0 2px rgba(255, 255, 255, 0.6);
+}
+
+.saver-date {
+    margin-top: 2px;
+    font-family: "Exo 2";
+    font-size: 15px;
+    font-weight: bold;
+    color: rgba(247, 210, 219, 0.85);
+    text-shadow: 0 0 10px rgba(238, 105, 142, 0.45);
+}
+
+.saver-brand {
+    margin-top: 14px;
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 9px;
+    font-weight: bold;
+    color: rgba(174, 143, 147, 0.70);
+}
+
+$n-text: #f7eaec;
+$n-muted: #ae8f93;
+$n-dim: #7c4c52;
+$n-accent: #ee698e;
+$n-glow: #ffb1d0;
+$n-line: rgba(255, 177, 208, 0.35);
+$n-sep: rgba(174, 143, 147, 0.30);
+$n-ok: #3ddc97;
+$n-warn: #f0b44c;
+$n-crit: #ff5d6c;
+$n-glass: linear-gradient(to bottom,
+    rgba(93, 32, 38, 0.90) 0%,
+    rgba(51, 16, 19, 0.84) 14%,
+    rgba(26, 13, 14, 0.80) 100%);
+$n-sheen: inset 0 1px 0 rgba(255, 196, 217, 0.24);
+$n-gloss: linear-gradient(to bottom, #f8aac0 0%, #ee698e 45%, #a51119 55%, #dd1f41 100%);
+$n-button: linear-gradient(to bottom, #722d34 0%, #581d22 46%, #471316 54%, #521a1f 100%);
+
+.hud {
+    background-image: $n-glass;
+    border: 1px solid $n-line;
+    box-shadow: $n-sheen;
+    color: $n-text;
+}
+
+.hud-brand,
+.card-title,
+.ring-num,
+.stat-val,
+.meter-pct,
+.dgpu-name,
+.track,
+.slim-val {
+    color: $n-text;
+}
+
+.hud-sub,
+.card-code,
+.ring-unit,
+.stat-key,
+.meter-detail,
+.artist,
+.media-pos,
+.slim-key,
+.slim-expand {
+    color: $n-muted;
+}
+
+.hud-collapse {
+    color: $n-muted;
+    border: 1px solid rgba(255, 177, 208, 0.30);
+}
+
+.hud-collapse:hover {
+    color: #ffffff;
+    background-color: $n-accent;
+    border-color: $n-glow;
+}
+
+.card {
+    background-color: rgba(247, 234, 236, 0.045);
+    border: 1px solid rgba(255, 177, 208, 0.20);
+}
+
+.card-head {
+    border-bottom: 1px dashed $n-sep;
+}
+
+.ring {
+    color: $n-glow;
+    background-color: rgba(193, 118, 127, 0.22);
+}
+
+.stat.alert .stat-val,
+.meter.alert .meter-pct {
+    color: $n-crit;
+}
+
+.spark {
+    color: $n-glow;
+    background-color: rgba(255, 177, 208, 0.08);
+}
+
+.spark.net {
+    color: $n-accent;
+}
+
+.bar trough {
+    background-color: rgba(193, 118, 127, 0.22);
+}
+
+.bar progress {
+    background-image: linear-gradient(to right, #dd1f41, $n-glow);
+    box-shadow: 0 0 6px rgba(255, 177, 208, 0.45);
+}
+
+.meter.alert .bar progress {
+    background-image: linear-gradient(to right, #c4283b, $n-crit);
+}
+
+.dgpu.sleep {
+    color: $n-ok;
+    background-color: rgba(61, 220, 151, 0.08);
+    border-color: rgba(61, 220, 151, 0.40);
+}
+
+.dgpu.awake {
+    color: $n-warn;
+    background-color: rgba(240, 180, 76, 0.10);
+    border-color: rgba(240, 180, 76, 0.45);
+}
+
+.dgpu:hover {
+    background-color: rgba(238, 105, 142, 0.18);
+}
+
+.art {
+    border: 1px solid $n-line;
+    background-color: #3e1317;
+}
+
+.viz {
+    color: $n-glow;
+}
+
+.ctl {
+    color: $n-text;
+    border: 1px solid rgba(255, 177, 208, 0.35);
+    background-color: rgba(247, 234, 236, 0.06);
+}
+
+.ctl:hover {
+    color: $n-glow;
+    background-color: rgba(238, 105, 142, 0.18);
+}
+
+.ctl.play {
+    color: #ffffff;
+    border-color: rgba(255, 177, 208, 0.75);
+    background-image: $n-gloss;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 0 8px rgba(238, 105, 142, 0.55);
+}
+
+.slim-brand,
+.slim-live.on {
+    color: $n-glow;
+}
+
+.slim-live {
+    color: $n-dim;
+}
+
+.slim-dgpu.sleep {
+    color: $n-ok;
+}
+
+.slim-dgpu.awake {
+    color: $n-warn;
+}
+
+.desk-card {
+    background-image: linear-gradient(to bottom,
+        rgba(93, 32, 38, 0.86) 0%,
+        rgba(56, 18, 21, 0.78) 46%,
+        rgba(29, 14, 15, 0.72) 54%,
+        rgba(38, 19, 21, 0.78) 100%);
+    border: 1px solid $n-line;
+    box-shadow: $n-sheen;
+    color: $n-text;
+}
+
+.desk-head,
+.chrono-foot,
+.atmos-stats {
+    border-color: $n-sep;
+}
+
+.desk-title,
+.chrono-time,
+.atmos-temp,
+.task-text {
+    color: $n-text;
+}
+
+.desk-tag,
+.chrono-date,
+.atmos-unit,
+.atmos-desc,
+.log-empty {
+    color: $n-muted;
+}
+
+.chrono-time {
+    text-shadow: 0 0 14px rgba(255, 177, 208, 0.30);
+}
+
+.chrono-sec,
+.atmos-icon,
+.task-box {
+    color: $n-glow;
+}
+
+.log-edit {
+    color: $n-text;
+    border: 1px solid rgba(255, 177, 208, 0.35);
+    background-color: rgba(247, 234, 236, 0.06);
+}
+
+.log-edit:hover {
+    color: #ffffff;
+    background-color: $n-accent;
+    border-color: $n-glow;
+}
+
+.task:hover {
+    background-color: rgba(238, 105, 142, 0.16);
+}
+
+.task.done .task-box {
+    color: $n-ok;
+}
+
+.task.done .task-text {
+    color: $n-dim;
+}
+
+.px-shell {
+    border: 3px solid rgba(247, 175, 194, 0.55);
+    background-image:
+        linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.30) 0%,
+            rgba(255, 255, 255, 0.08) 36%,
+            rgba(255, 255, 255, 0.0) 38%,
+            rgba(255, 255, 255, 0.0) 100%),
+        linear-gradient(to bottom,
+            #c93353 0%,
+            #a91e33 22%,
+            #841522 55%,
+            #620e15 82%,
+            #48090e 100%);
+    box-shadow:
+        0 0 0 2px rgba(94, 43, 47, 0.95),
+        inset 0 2px 0 rgba(255, 194, 210, 0.45),
+        inset 0 -8px 14px rgba(0, 0, 0, 0.35),
+        0 0 22px rgba(238, 105, 142, 0.22);
+}
+
+.lcd {
+    border: 2px solid rgba(255, 177, 208, 0.45);
+    box-shadow:
+        inset 0 3px 8px rgba(0, 0, 0, 0.55),
+        0 0 10px rgba(255, 177, 208, 0.18);
+}
+
+.pbtn {
+    color: $n-glow;
+    border: 2px solid rgba(255, 177, 208, 0.40);
+    background-image: $n-button;
+    box-shadow: inset 0 1px 0 rgba(255, 196, 217, 0.35), 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.pbtn:hover {
+    color: #ffffff;
+    background-image: linear-gradient(to bottom, #8e3a43 0%, #6d262d 46%, #581a1f 54%, #68242b 100%);
+}
+
+.pbtn:active {
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.55);
+}
+
+.pbtn.play.live {
+    border: 3px solid #2fbf5a;
+    box-shadow: inset 0 1px 0 rgba(255, 196, 217, 0.35), 0 0 10px rgba(76, 220, 120, 0.85);
+}
+
+.px-seek trough {
+    background-color: rgba(0, 0, 0, 0.40);
+}
+
+.px-seek slider {
+    border: 2px solid rgba(255, 177, 208, 0.60);
+    background-image: linear-gradient(to bottom, #f7eaec 0%, #e8bfc6 50%, #ddabb2 52%, #f7eaec 100%);
+}
+
+.px-led {
+    color: rgba(247, 234, 236, 0.25);
+}
+
+.osd-pill {
+    border: 1px solid $n-line;
+    background-image: linear-gradient(to bottom,
+        rgba(105, 39, 45, 0.95) 0%,
+        rgba(62, 20, 23, 0.92) 46%,
+        rgba(29, 14, 15, 0.90) 54%,
+        rgba(38, 19, 21, 0.93) 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 196, 217, 0.28), 0 6px 18px rgba(0, 0, 0, 0.40), 0 0 12px rgba(238, 105, 142, 0.20);
+    color: $n-text;
+}
+
+.osd-icon {
+    color: $n-glow;
+}
+
+.osd-label,
+.osd-value {
+    color: $n-text;
+}
+
+.osd-device {
+    color: $n-muted;
+}
+
+.seg {
+    background-color: rgba(193, 118, 127, 0.20);
+    border: 1px solid rgba(255, 177, 208, 0.10);
+}
+
+.seg.on {
+    border: 1px solid rgba(255, 177, 208, 0.70);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 5px rgba(255, 177, 208, 0.55);
+}
+
+.osd-pill.muted .osd-icon,
+.osd-pill.muted .osd-value {
+    color: $n-crit;
+}
+
+.ov-scrim {
+    background-image: linear-gradient(to bottom,
+        rgba(19, 10, 10, 0.62) 0%,
+        rgba(29, 14, 15, 0.56) 60%,
+        rgba(52, 14, 17, 0.62) 100%);
+}
+
+.ov-header {
+    border-bottom: 1px dashed $n-sep;
+}
+
+.ov-heading,
+.ov-title {
+    color: $n-text;
+}
+
+.ov-meta,
+.ov-hint,
+.ov-state {
+    color: $n-muted;
+}
+
+.ov-card {
+    border: 1px solid $n-line;
+    background-image: linear-gradient(to bottom,
+        rgba(99, 36, 42, 0.94) 0%,
+        rgba(62, 20, 23, 0.90) 46%,
+        rgba(31, 15, 16, 0.88) 54%,
+        rgba(50, 15, 18, 0.92) 100%);
+    box-shadow: $n-sheen, 0 6px 18px rgba(0, 0, 0, 0.40);
+}
+
+.ov-hit:hover > .ov-card {
+    border-color: $n-glow;
+    box-shadow: $n-sheen, 0 0 0 3px rgba(255, 177, 208, 0.30), 0 10px 24px rgba(0, 0, 0, 0.45);
+}
+
+.ov-card.current {
+    border-color: $n-glow;
+    box-shadow: $n-sheen, 0 0 0 3px rgba(238, 105, 142, 0.55), 0 0 18px rgba(255, 177, 208, 0.30);
+}
+
+.ov-num {
+    color: $n-text;
+    border: 1px solid rgba(255, 177, 208, 0.40);
+    background-image: $n-button;
+}
+
+.ov-card.current .ov-num {
+    border-color: $n-glow;
+    background-image: $n-gloss;
+    color: #ffffff;
+}
+
+.ov-card.current .ov-state {
+    color: $n-glow;
+}
+
+.ov-bezel {
+    border: 1px solid rgba(255, 177, 208, 0.30);
+    background-color: #0a0505;
+    box-shadow: inset 0 1px 0 rgba(255, 196, 217, 0.15);
+}
+
+.dock {
+    border: 1px solid $n-line;
+    background-image: linear-gradient(to bottom,
+        rgba(105, 39, 45, 0.88) 0%,
+        rgba(62, 20, 23, 0.80) 46%,
+        rgba(29, 14, 15, 0.76) 54%,
+        rgba(38, 19, 21, 0.82) 100%);
+    box-shadow: $n-sheen, inset 0 -1px 0 rgba(255, 177, 208, 0.10), 0 8px 22px rgba(0, 0, 0, 0.40),
+                0 0 16px rgba(238, 105, 142, 0.16);
+}
+
+.dock-hit:hover .dock-orb {
+    background-image: radial-gradient(ellipse at 50% 80%,
+        rgba(255, 177, 208, 0.30) 0%,
+        rgba(255, 177, 208, 0.0) 72%);
+}
+
+.dock-item.active .dock-orb {
+    background-image: radial-gradient(ellipse at 50% 85%,
+        rgba(255, 177, 208, 0.40) 0%,
+        rgba(255, 177, 208, 0.0) 70%);
+}
+
+.dock-reflect {
+    opacity: 0.55;
+}
+
+.dock-dot {
+    background-color: $n-glow;
+    box-shadow: 0 0 6px rgba(255, 177, 208, 0.95);
+}
+
+.dock-sep {
+    background-image: linear-gradient(to bottom,
+        rgba(174, 143, 147, 0.0) 0%,
+        rgba(174, 143, 147, 0.45) 50%,
+        rgba(174, 143, 147, 0.0) 100%);
+}
+
+.orb {
+    border: 1px solid rgba(255, 177, 208, 0.70);
+}
+
+.dock-grid {
+    color: $n-glow;
+}
+
+.dock-hit:hover .dock-grid {
+    color: #ffffff;
+}
+
+.dock-handle {
+    background-image: radial-gradient(ellipse 50% 100% at 50% 100%,
+        rgba(255, 177, 208, 0.26) 0%,
+        rgba(255, 177, 208, 0.10) 45%,
+        rgba(255, 177, 208, 0.0) 100%);
+}
+
+.dock-handle-wrap:hover .dock-handle {
+    background-image: radial-gradient(ellipse 50% 100% at 50% 100%,
+        rgba(255, 207, 228, 0.70) 0%,
+        rgba(255, 177, 208, 0.26) 45%,
+        rgba(255, 177, 208, 0.0) 100%);
+}
+
+.sky-time {
+    color: $n-text;
+}
+
+.sky-next {
+    color: $n-glow;
+}
+
+.sky-moon {
+    color: $n-muted;
+}

@@ -1,0 +1,9 @@
+{
+  "wallpaper": "video",
+  "pause_when": "fullscreen",
+  "visualizer_fps": 24,
+  "desk_fps": 30,
+  "resident": true,
+  "transition": true,
+  "name": "completo"
+}

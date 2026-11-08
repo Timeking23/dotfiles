@@ -1,0 +1,23 @@
+# Bloom Night: near-black, bone text, lamplight amber; muted rose/sage/steel/mauve
+background = #0c0b0d
+foreground = #e8e4e0
+cursor-color = #ead9b6
+cursor-text = #0c0b0d
+selection-background = #4a3e2c
+selection-foreground = #ffffff
+palette = 0=#1a191c
+palette = 1=#d0707a
+palette = 2=#8fb08a
+palette = 3=#ead9b6
+palette = 4=#8a9bb8
+palette = 5=#b88aa8
+palette = 6=#8ab0b0
+palette = 7=#c8c4c0
+palette = 8=#5a5658
+palette = 9=#e8939b
+palette = 10=#a9c9a3
+palette = 11=#f5e6c4
+palette = 12=#a9b8d0
+palette = 13=#d0a8c4
+palette = 14=#a8cccc
+palette = 15=#f2eee9

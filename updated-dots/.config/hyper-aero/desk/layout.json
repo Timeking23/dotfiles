@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "cell": 48,
+  "cols": 26,
+  "rows": 19,
+  "hidden": false,
+  "widgets": [
+    {
+      "id": "pulsex",
+      "c": 18,
+      "r": 0,
+      "w": 8,
+      "h": 7
+    },
+    {
+      "id": "calendar",
+      "c": 0,
+      "r": 0,
+      "w": 6,
+      "h": 6
+    }
+  ]
+}

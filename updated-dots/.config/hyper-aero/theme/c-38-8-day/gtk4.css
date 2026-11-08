@@ -1,0 +1,43 @@
+:root {
+    --accent-color: #4f5259;
+    --accent-bg-color: #4f5259;
+    --accent-fg-color: #ffffff;
+    --window-bg-color: #f7f8f8;
+    --window-fg-color: #0d0d0d;
+    --view-bg-color: #ffffff;
+    --view-fg-color: #0d0d0d;
+    --headerbar-bg-color: #eceded;
+    --headerbar-fg-color: #0d0d0d;
+    --headerbar-backdrop-color: #f3f3f4;
+    --sidebar-bg-color: #f0f0f1;
+    --sidebar-fg-color: #0d0d0d;
+    --card-bg-color: #ffffff;
+    --card-fg-color: #0d0d0d;
+    --popover-bg-color: #ffffff;
+    --popover-fg-color: #0d0d0d;
+    --dialog-bg-color: #f7f8f8;
+    --dialog-fg-color: #0d0d0d;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --accent-color: #f3bf66;
+        --accent-bg-color: #6d7279;
+        --accent-fg-color: #ffffff;
+        --window-bg-color: #141415;
+        --window-fg-color: #ededee;
+        --view-bg-color: #18191a;
+        --view-fg-color: #ededee;
+        --headerbar-bg-color: #212223;
+        --headerbar-fg-color: #ededee;
+        --headerbar-backdrop-color: #1b1c1d;
+        --sidebar-bg-color: #171719;
+        --sidebar-fg-color: #ededee;
+        --card-bg-color: #202022;
+        --card-fg-color: #ededee;
+        --popover-bg-color: #202022;
+        --popover-fg-color: #ededee;
+        --dialog-bg-color: #1a1b1c;
+        --dialog-fg-color: #ededee;
+    }
+}

@@ -1,0 +1,363 @@
+import QtQuick
+
+Item {
+    id: w
+    property var core
+    property var pal
+    readonly property var p: core ? core.player : null
+    readonly property bool playing: !!(p && p.isPlaying)
+    readonly property real len: p && p.length > 0 ? p.length : 0
+    property real pos: 0
+    // Classic 275x116 main-window proportions, scaled to the widget cell.
+    readonly property real baseW: 275
+    readonly property real baseH: 116
+    readonly property real k: Math.min(width / baseW, height / baseH)
+
+    readonly property string mono: "JetBrainsMono Nerd Font Mono"
+    readonly property color lcdOn: "#00e800"
+    readonly property color lcdDim: "#0c3a0c"
+    readonly property color face: "#3c3c52"
+    readonly property color hi: "#8a8aa6"
+    readonly property color lo: "#14141e"
+
+    function clock(s) {
+        s = Math.max(0, Math.floor(s))
+        var m = Math.floor(s / 60)
+        var r = s % 60
+        return (m < 10 ? "0" : "") + m + ":" + (r < 10 ? "0" : "") + r
+    }
+
+    component Bevel: Rectangle {
+        property bool sunk: false
+        color: w.face
+        Rectangle { width: parent.width; height: 1; color: parent.sunk ? w.lo : w.hi }
+        Rectangle { width: 1; height: parent.height; color: parent.sunk ? w.lo : w.hi }
+        Rectangle { y: parent.height - 1; width: parent.width; height: 1; color: parent.sunk ? w.hi : w.lo }
+        Rectangle { x: parent.width - 1; width: 1; height: parent.height; color: parent.sunk ? w.hi : w.lo }
+    }
+
+    component Key: Rectangle {
+        id: key
+        property string glyph: ""
+        property real glyphSize: 9
+        property bool lit: false
+        signal clicked()
+        width: 23
+        height: 18
+        color: ma.pressed ? "#9a9aac" : "#c4c4d0"
+        Rectangle { width: parent.width; height: 1; color: ma.pressed ? "#5c5c70" : "#f0f0f8" }
+        Rectangle { width: 1; height: parent.height; color: ma.pressed ? "#5c5c70" : "#f0f0f8" }
+        Rectangle { y: parent.height - 1; width: parent.width; height: 1; color: ma.pressed ? "#f0f0f8" : "#4a4a5c" }
+        Rectangle { x: parent.width - 1; width: 1; height: parent.height; color: ma.pressed ? "#f0f0f8" : "#4a4a5c" }
+        Text {
+            anchors.centerIn: parent
+            anchors.verticalCenterOffset: ma.pressed ? 1 : 0
+            text: key.glyph
+            font.family: w.mono
+            font.pixelSize: key.glyphSize
+            font.bold: true
+            color: key.lit ? "#0a7a0a" : "#1c1c26"
+        }
+        MouseArea { id: ma; anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: key.clicked() }
+    }
+
+    Timer {
+        interval: 1000
+        repeat: true
+        running: !!w.p
+        triggeredOnStart: true
+        onTriggered: {
+            if (w.p) {
+                w.p.positionChanged()
+                w.pos = w.p.position
+            }
+        }
+    }
+
+    Item {
+        width: w.baseW
+        height: w.baseH
+        anchors.centerIn: parent
+        scale: w.k
+
+        Bevel {
+            anchors.fill: parent
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "#4c4c66" }
+                GradientStop { position: 0.5; color: "#36364a" }
+                GradientStop { position: 1.0; color: "#26263a" }
+            }
+        }
+
+        // Title bar
+        Item {
+            x: 2; y: 2
+            width: parent.width - 4
+            height: 12
+            Rectangle { anchors.fill: parent; color: "#20202e" }
+            Repeater {
+                model: 4
+                delegate: Rectangle {
+                    required property int index
+                    x: 4
+                    y: 2 + index * 2.5
+                    width: parent.width - 34
+                    height: 1
+                    color: index % 2 ? "#8a7430" : "#d8b850"
+                }
+            }
+            Rectangle {
+                anchors.centerIn: parent
+                anchors.horizontalCenterOffset: -14
+                width: title.implicitWidth + 10
+                height: parent.height
+                color: "#20202e"
+                Text {
+                    id: title
+                    anchors.centerIn: parent
+                    text: "WINAMP"
+                    font.family: w.mono
+                    font.pixelSize: 8
+                    font.bold: true
+                    font.letterSpacing: 1.5
+                    color: "#e8e8f0"
+                }
+            }
+            Row {
+                anchors.right: parent.right
+                anchors.rightMargin: 2
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 1
+                Repeater {
+                    model: ["_", "▫", "×"]
+                    delegate: Rectangle {
+                        required property string modelData
+                        width: 9; height: 9
+                        color: "#b0b0c0"
+                        border.width: 1
+                        border.color: "#50506a"
+                        Text { anchors.centerIn: parent; text: parent.modelData; font.pixelSize: 7; font.bold: true; color: "#20202a" }
+                    }
+                }
+            }
+        }
+
+        // Time + visualizer LCD
+        Bevel {
+            id: lcd
+            sunk: true
+            x: 9; y: 19
+            width: 95; height: 43
+            color: "#000000"
+
+            Text {
+                x: 4; y: 3
+                text: w.playing ? "▶" : (w.p ? "❚❚" : "■")
+                font.pixelSize: 7
+                color: w.lcdOn
+            }
+            Text {
+                x: 4; y: 13
+                text: w.playing ? "" : "○"
+                font.pixelSize: 6
+                color: w.lcdDim
+            }
+            Item {
+                x: 20; y: 0
+                width: 72; height: 24
+                Text {
+                    anchors.centerIn: parent
+                    text: "88:88"
+                    font.family: w.mono
+                    font.pixelSize: 20
+                    font.bold: true
+                    color: w.lcdDim
+                }
+                Text {
+                    anchors.centerIn: parent
+                    text: w.clock(w.pos)
+                    font.family: w.mono
+                    font.pixelSize: 20
+                    font.bold: true
+                    color: w.lcdOn
+                    // Classic blink while paused.
+                    opacity: w.p && !w.playing ? (blink.on ? 1 : 0.15) : 1
+                }
+                Timer { id: blink; property bool on: true; interval: 600; repeat: true; running: !!w.p && !w.playing; onTriggered: on = !on }
+            }
+
+            Row {
+                x: 4
+                y: 26
+                height: 15
+                spacing: 1
+                Repeater {
+                    model: 19
+                    delegate: Item {
+                        required property int index
+                        readonly property real v: w.core && w.core.bars.length ? (w.core.bars[Math.floor(index * w.core.bars.length / 19)] || 0) : (w.playing ? 0.25 + 0.25 * Math.abs(Math.sin(w.pos * 1.7 + index)) : 0)
+                        width: 3.6
+                        height: 15
+                        Item {
+                            anchors.bottom: parent.bottom
+                            width: parent.width
+                            height: Math.max(0, 15 * Math.min(1, parent.v))
+                            clip: true
+                            Behavior on height { NumberAnimation { duration: 90 } }
+                            Rectangle {
+                                anchors.bottom: parent.bottom
+                                width: parent.width
+                                height: 15
+                                gradient: Gradient {
+                                    GradientStop { position: 0.0; color: "#e81c10" }
+                                    GradientStop { position: 0.35; color: "#d8c818" }
+                                    GradientStop { position: 1.0; color: "#18b818" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Scrolling song title
+        Bevel {
+            sunk: true
+            x: 109; y: 21
+            width: 157; height: 13
+            color: "#000000"
+            clip: true
+            Text {
+                id: marq
+                readonly property string full: w.p ? ((w.p.trackArtist ? w.p.trackArtist + " - " : "") + (w.p.trackTitle || String(w.p.identity || ""))) : "WINAMP *** IT REALLY WHIPS"
+                property real shift: 0
+                anchors.verticalCenter: parent.verticalCenter
+                x: implicitWidth > parent.width - 6 ? 3 - shift : 3
+                text: full
+                font.family: w.mono
+                font.pixelSize: 8
+                color: w.lcdOn
+                NumberAnimation on shift {
+                    running: marq.implicitWidth > marq.parent.width - 6
+                    from: 0
+                    to: marq.implicitWidth - marq.parent.width + 12
+                    duration: Math.max(3000, (marq.implicitWidth - marq.parent.width) * 60)
+                    loops: Animation.Infinite
+                    easing.type: Easing.InOutSine
+                }
+            }
+        }
+
+        // kbps / kHz / mono-stereo
+        Row {
+            x: 109; y: 38
+            spacing: 3
+            Bevel { sunk: true; width: 17; height: 10; color: "#000"; Text { anchors.centerIn: parent; text: w.p ? "320" : ""; font.family: w.mono; font.pixelSize: 7; color: w.lcdOn } }
+            Text { text: "kbps"; font.family: w.mono; font.pixelSize: 7; color: "#c8c8d8"; anchors.verticalCenter: parent.verticalCenter }
+            Bevel { sunk: true; width: 13; height: 10; color: "#000"; Text { anchors.centerIn: parent; text: w.p ? "44" : ""; font.family: w.mono; font.pixelSize: 7; color: w.lcdOn } }
+            Text { text: "kHz"; font.family: w.mono; font.pixelSize: 7; color: "#c8c8d8"; anchors.verticalCenter: parent.verticalCenter }
+        }
+        Row {
+            x: 205; y: 39
+            spacing: 4
+            Text { text: "mono"; font.family: w.mono; font.pixelSize: 7; font.bold: true; color: w.lcdDim }
+            Text { text: "stereo"; font.family: w.mono; font.pixelSize: 7; font.bold: true; color: w.p ? w.lcdOn : w.lcdDim }
+        }
+
+        // Volume
+        Item {
+            id: vol
+            x: 107; y: 55
+            width: 68; height: 11
+            readonly property real v: w.core ? (w.core.muted ? 0 : w.core.volume) : 0
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width; height: 6
+                border.width: 1
+                border.color: w.lo
+                color: Qt.rgba(0.1 + 0.8 * vol.v, 0.75 - 0.55 * vol.v, 0.1, 1)
+            }
+            Key { x: (parent.width - width) * vol.v; width: 14; height: 11; anchors.verticalCenter: parent.verticalCenter }
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                function set(mx) { if (w.core) w.core.nudgeVolume(Math.max(0, Math.min(1, mx / vol.width)) - vol.v) }
+                onPressed: function(m) { set(m.x) }
+                onPositionChanged: function(m) { if (pressed) set(m.x) }
+                onWheel: function(e) { if (w.core) w.core.nudgeVolume(e.angleDelta.y > 0 ? 0.05 : -0.05) }
+            }
+        }
+        // Balance (decorative, centered)
+        Item {
+            x: 178; y: 55
+            width: 38; height: 11
+            Rectangle { anchors.verticalCenter: parent.verticalCenter; width: parent.width; height: 6; border.width: 1; border.color: w.lo; color: "#18a018" }
+            Key { x: (parent.width - width) / 2; width: 14; height: 11; anchors.verticalCenter: parent.verticalCenter }
+        }
+        Row {
+            x: 219; y: 55
+            spacing: 1
+            Key { width: 23; height: 12; glyph: "EQ"; glyphSize: 7 }
+            Key { width: 23; height: 12; glyph: "PL"; glyphSize: 7 }
+        }
+
+        // Seek bar
+        Item {
+            id: seek
+            x: 15; y: 71
+            width: 248; height: 10
+            readonly property real v: w.len > 0 ? Math.min(1, w.pos / w.len) : 0
+            Bevel { sunk: true; anchors.fill: parent; color: "#1a1a26" }
+            Key {
+                visible: w.len > 0
+                x: (parent.width - width) * seek.v
+                width: 29; height: 10
+            }
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                function jump(mx) {
+                    if (!w.p || !w.p.canSeek || w.len <= 0) return
+                    var t = Math.max(0, Math.min(1, mx / seek.width)) * w.len
+                    w.p.position = t
+                    w.pos = t
+                }
+                onPressed: function(m) { jump(m.x) }
+                onPositionChanged: function(m) { if (pressed) jump(m.x) }
+            }
+        }
+
+        // Transport
+        Row {
+            x: 16; y: 88
+            spacing: 0
+            Key { glyph: "⏮"; onClicked: w.core.media("prev") }
+            Key { glyph: "▶"; lit: w.playing; onClicked: if (w.p && !w.playing) w.core.media("toggle") }
+            Key { glyph: "❚❚"; glyphSize: 7; lit: !!w.p && !w.playing; onClicked: if (w.playing) w.core.media("toggle") }
+            Key { glyph: "■"; onClicked: if (w.p && w.p.canControl) w.p.stop() }
+            Key { width: 22; glyph: "⏭"; onClicked: w.core.media("next") }
+        }
+        Key {
+            x: 136; y: 89
+            width: 22; height: 16
+            glyph: "⏏"
+            onClicked: if (w.p && w.p.canRaise) w.p.raise()
+        }
+        Row {
+            x: 164; y: 89
+            spacing: 0
+            Key {
+                width: 47; height: 15; glyph: "SHUFFLE"; glyphSize: 6
+                lit: !!(w.p && w.p.shuffle)
+                onClicked: if (w.p && w.p.shuffleSupported) w.p.shuffle = !w.p.shuffle
+            }
+            Key { width: 28; height: 15; glyph: "REP"; glyphSize: 6 }
+        }
+        Text {
+            x: 247; y: 89
+            text: "⚡"
+            font.pixelSize: 13
+            color: "#d8b850"
+        }
+    }
+}
